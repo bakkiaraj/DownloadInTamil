@@ -1,0 +1,168 @@
+/* gradle build file for gradle wrapper + Kotlin
+* Author: Bakki */
+
+group 'com.saaral'
+version '0.0.1'
+description 'Kotlin Sample app - Build with Gradle'
+
+def myAppName = 'DownloadInTamil' // local variable
+project.ext.set('javahome', System.env['JAVA_HOME'])
+
+//Dependencies for the gradle build script itself
+buildscript {
+
+    ext.kotlin_version = '1.1.3-2'
+    ext.shadowplugin_version = '2.0.0' // from https://github.com/johnrengelman/shadow
+
+    repositories {
+
+        //https://bintray.com/bintray/jcenter
+        jcenter()
+
+        //https://search.maven.org/
+        //https://mvnrepository.com
+        //mavenCentral()
+
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        // When gradle build needs something to run, Its under classpath
+        classpath "com.github.jengelman.gradle.plugins:shadow:$shadowplugin_version"
+    }
+}
+
+//Add your plugins of needs
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'application'
+//http://imperceptiblethoughts.com/shadow/
+apply plugin: 'com.github.johnrengelman.shadow'
+
+mainClassName = "com.saaral.$myAppName"
+defaultTasks 'run'
+
+
+/*compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}*/
+
+//https://kotlinlang.org/docs/reference/using-gradle.html
+compileKotlin {
+    kotlinOptions {
+        verbose = true
+        jvmTarget= "1.8"
+    }
+}
+
+kotlin {
+    experimental {
+        coroutines 'enable'
+    }
+}
+
+sourceSets {
+    main.kotlin.srcDirs += 'src/main/kotlin'
+    //main.java.srcDirs += 'src/main/java'
+
+    test.kotlin.srcDirs += 'src/test/kotlin'
+}
+
+// In this section you declare where to find the dependencies of your project
+repositories {
+    //include lib folder
+    flatDir { dirs 'lib' }
+    // Remote binary repositories to resolve dependencies
+    // You can declare any Maven/Ivy/file repository here.
+
+    //jcenter is faster , HTTPS, Superset of mavenCentral, Google Android uses only jcenter
+    //https://bintray.com/bintray/jcenter
+    jcenter()
+
+    //In case of issues with jcenter(), Enable mavenCentral()
+    //https://search.maven.org/
+    //https://mvnrepository.com
+    mavenCentral()
+    //mavenLocal()
+}
+
+dependencies {
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.fusesource.jansi:jansi:1.16"
+    compile "net.sourceforge.htmlunit:htmlunit:2.27"
+    compile "commons-io:commons-io:2.4"
+    compile "commons-cli:commons-cli:1.4"
+
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Version': version,
+                'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+                'Main-Class': mainClassName
+    }
+    from configurations.compile.collect { entry -> zipTree(entry) }
+}
+
+shadowJar {
+    baseName = myAppName
+    classifier = "FAT"
+    version = null
+}
+
+runShadow {
+    standardInput = System.in
+    //opt1 is coming from Run configuration of the IDEA , As a -Popt1
+    args = ['rer','ll']
+}
+
+clean {
+    //Also clean some custom folders
+    delete fileTree(dir: "${project.projectDir}/dependencies", include: '*')
+    delete fileTree(dir: "${project.projectDir}/exe", include: '*')
+}
+
+
+
+//Custom tasks
+
+//Task to copy all the dependencies in to dependencies folder
+task copyDependsLibs(type: Copy) {
+    dependsOn shadowJar
+
+    from configurations.compile
+    from configurations.runtime
+    from configurations.testCompile
+    into "${project.projectDir}/dependencies"
+}
+
+//Build and copy the final executable Jar into EXE folder
+task buildExecutableJar(type: Copy) {
+    dependsOn shadowJar
+
+    from shadowJar //Using gradle's auto wire feature, It will automatically inject the jar name
+    into "${project.projectDir}/exe"
+    tasks.copyDependsLibs.execute()
+}
+
+//Update the Gradle wrapper version
+// Alternate: Update gradle/wrapper/gradle-wrapper.properties file distributionUrl variable
+// Ex: distributionUrl=https://services.gradle.org/distributions/gradle-3.5-all.zip ,
+// uses 3.5 all (src+bin) version of gradle. SRC is needed for IDE to show help on gradle file
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.1-rc-2'
+    setDistributionType(Wrapper.DistributionType.ALL)
+}
+
+/**
+ TIPS:
+ * 1) use --profile with any gradle task for analysing build slowness / profile build steps
+ * Ex:
+ * gradle buildExecutableJar --profile
+ *
+ * This generates the .html under build/reports
+ *
+ * 2)
+ */
