@@ -5,22 +5,79 @@ import com.gargoylesoftware.htmlunit.BrowserVersion
 import com.gargoylesoftware.htmlunit.UnexpectedPage
 import com.gargoylesoftware.htmlunit.WebClient
 import com.gargoylesoftware.htmlunit.html.*
+import org.apache.commons.cli.DefaultParser
+import org.apache.commons.cli.HelpFormatter
+import org.apache.commons.cli.Option
+import org.apache.commons.cli.Options
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.fusesource.jansi.Ansi
 import java.io.File
+import java.net.URL
+import java.net.URLDecoder
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger.getLogger
-import java.util.ArrayList
-import java.util.concurrent.TimeUnit
 
 
 //Globals , Visible to this IDEA module
 internal var proxyHostName = ""
 internal var proxyPort =0
 
+fun defineCmdLineOptions():Options {
+    return Options().apply {
+
+        addOption(with(Option.builder("U")){
+             argName("InTamil_URL")
+             desc("intamil.in movie URL to download songs. Ex: http://intamil.in/songs/Katha-Nayagan")
+             longOpt("url")
+             numberOfArgs(1)
+             required(true)
+             type(URL::class.java) //Refer PatternOptionBuilder doc for types
+             build()
+         })
+
+        addOption(with(Option.builder("O")){
+            argName("Output_Directory")
+            desc("Output directory where movie specific folders will get created to download songs. Ex:C:/Temp")
+            longOpt("outdir")
+            numberOfArgs(1)
+            required(true)
+            type(File::class.java) //Refer PatternOptionBuilder doc for types
+            build()
+        })
+
+        addOption(with(Option.builder("h")){
+            argName("help")
+            desc("Shows Help message")
+            longOpt("help")
+            optionalArg(false)
+            numberOfArgs(0)
+            required(false)
+            build()
+        })
+    }
+}
+
+fun showHelp(cmdLineOptionsTemplate:Options, myJarFileName:String,myJarVersion:String, myJarFullPath:String) {
+    val header="$myJarFileName v$myJarVersion is a tool to download all the movie songs from http://intamil.in website.\n" +
+            " intamil.in website do not have option to download all the songs of a movie at one go. This tool download all songs in parallel."
+    val footer="© Bakkiaraj Murugesan \n"+" https://bakkiaraj.github.io/DownloadInTamil"+"\n License: MIT License"+"\n Local Install: $myJarFullPath"
+
+    HelpFormatter().apply {
+        //descPadding = 10
+        //leftPadding = 20
+        width=180
+        //optPrefix="\n-"
+        printHelp(Ansi.ansi().fg(Ansi.Color.GREEN).a("java -jar $myJarFileName [Options]").toString(),
+                Ansi.ansi().fg(Ansi.Color.DEFAULT).a("\n $header \n\n[Options]").toString(),
+                cmdLineOptionsTemplate,
+                Ansi.ansi().fg(Ansi.Color.CYAN).a("\n $footer \n").toString())
+    }
+    System.exit(2)
+}
 
 fun canProceed() : Boolean {
     var goAhead : Boolean? = null
@@ -45,22 +102,21 @@ fun canProceed() : Boolean {
     return goAhead
 }
 
-fun downloadSingleSongFromURL(downloadDirectory: String,songFN:String,songURL:String) : Boolean {
+fun downloadSingleSongFromURL(downloadDirectory: String,songFileName:String,songURL:String) : Boolean {
 
-    var songID = -1.toLong()
-    var songFN = songFN //Fix file name
+    var songFN = songFileName //Fix file name
     songFN = songFN.replace("(\\d+)\\.\\s*".toRegex(),"") //Remove numbers
     songFN = songFN.replace("\\s+".toRegex(),"_") //Replace space to _
     songFN = songFN.replace("_$".toRegex(),"") //Last _ to none
 
-    println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Start search $songFN info from $songURL into $downloadDirectory ...").reset())
+    println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Start search $songFN info from $songURL ...").reset())
 
     //Find download link from the song link
     //intamil logic http://intamil.co/song/<NUMBER>/Dooram-Nillu => http://intamil.co/download/<NUMBER> is download link
     val songIDRegExPattern = "(?i)\\s*http[s]?://.*/song/(.*)/.*".toRegex()
-    songID = songIDRegExPattern.matchEntire(songURL)?.groups?.get(1)?.value?.toLong() ?: -1.toLong()
-    if (songID ==-1.toLong()){
-        println(Ansi.ansi().fg(Ansi.Color.RED).a("INFO: Can not find intamil songid from URL $songURL ...").reset())
+    val songID = songIDRegExPattern.matchEntire(songURL)?.groups?.get(1)?.value?.toLong() ?: -1.toLong()
+    if (songID == -1.toLong()){
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("INFO: Can not find intamil songid from URL $songURL into $downloadDirectory ...").reset())
         return false
     }
     val songDownloadInTamilURL="http://intamil.co/download/"+songID.toString()
@@ -73,8 +129,8 @@ fun downloadSingleSongFromURL(downloadDirectory: String,songFN:String,songURL:St
             println(Ansi.ansi().fg(Ansi.Color.RED).a("WARNING:: Content type does not look like song. its " + songfilePage.webResponse.contentType).reset())
         }
 
-        var inpStream = songfilePage.webResponse.contentAsStream
-        var bytescopied = inpStream.copyTo(File("$downloadDirectory/$songFN").outputStream())
+        val inpStream = songfilePage.webResponse.contentAsStream
+        val bytescopied = inpStream.copyTo(File("$downloadDirectory/$songFN").outputStream())
 
         if (bytescopied == 0.toLong()) {
             println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Can not copy Input Stream Bytes to File $downloadDirectory/$songFN"))
@@ -95,7 +151,9 @@ fun downloadSingleSongFromURL(downloadDirectory: String,songFN:String,songURL:St
 
 fun downloadSongs(downloadDirectory: String, songsNameAndURL:LinkedHashMap<String,String>) : Int  {
     var numberofSongsDownloaded = 0
-    val numberofProcessors =  Runtime.getRuntime().availableProcessors() - 1  // Leave one for the main processing
+    //val numberofProcessors =  Runtime.getRuntime().availableProcessors() - 1  // Leave one for the main processing
+    //TODO: RM Later
+    val numberofProcessors =  1
     println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Create download dir $downloadDirectory").reset())
     try {
         FileUtils.forceMkdir(File(downloadDirectory))
@@ -147,8 +205,8 @@ fun downloadSongs(downloadDirectory: String, songsNameAndURL:LinkedHashMap<Strin
 }
 /**
  * This function sets the proxyHostName , proxyPort module level functions. Call this function only once in main
- * @param none
- * @return none
+ * @param
+ * @return
  */
 fun setHTTPProxy(){
 
@@ -197,12 +255,53 @@ fun main(vararg  args: String){
 
     getLogger("com.gargoylesoftware").level = Level.OFF
 
-    val movieURL = "http://intamil.co/songs/Velaiilla-Pattadhari-2"
-    val songsDownloadBaseDir = "/tmp"
+    //Set
+    val startTime = System.currentTimeMillis()
+
+    val MyDetails = object  {
+        val myJarFullPath = URLDecoder.decode(this::class.java.protectionDomain.codeSource.location.path,"UTF-8") ?: "."
+        val myJarFileName = FilenameUtils.getName(myJarFullPath) ?: "CheckForNewSVNTags"
+        val myJarVersion = this::class.java.`package`.implementationVersion ?: "0.0.0"
+    }
+    println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Start "+MyDetails.myJarFileName).reset())
+    //TODO: RM Later
+    val strarray = arrayOf<String>("--url=http://intamil.co/songs/Velaiilla-Pattadhari-2",
+            "--outdir=C:/Temp")
+
+    //Handle command line options
+    val cmdLineOptionsTemplate = defineCmdLineOptions()
+
+    var cmdLineParser : org.apache.commons.cli.CommandLine? = null
+    try {
+        cmdLineParser = DefaultParser().parse(cmdLineOptionsTemplate,strarray,true)
+    }catch (ex:Exception){
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: "+ex.message).reset())
+        showHelp(cmdLineOptionsTemplate,MyDetails.myJarFileName,MyDetails.myJarVersion,MyDetails.myJarFullPath)
+        ex.printStackTrace()
+    }
+
+    val movieURL =  cmdLineParser?.getParsedOptionValue("url") as URL
+    val songsDownloadBaseDir = cmdLineParser.getParsedOptionValue("outdir") as File
+
+    //Validate inputs
+    if (cmdLineParser.hasOption("help")) showHelp(cmdLineOptionsTemplate,MyDetails.myJarFileName,MyDetails.myJarVersion,MyDetails.myJarFullPath)
+    if (! movieURL.host.startsWith("intamil")){
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: $movieURL does not seems to be http://intamil.co website. At this time, we support only intamil.co website."))
+        System.exit(1)
+    }
+    if (!songsDownloadBaseDir.exists() || !songsDownloadBaseDir.isDirectory || !songsDownloadBaseDir.canWrite()){
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: $songsDownloadBaseDir does not exists OR its not a writable directory / folder.").reset())
+    }
+    //TODO: RM Later
+    System.exit(0)
+
     val songsMap = linkedMapOf<String,String>()
     //Download the HTML page of the intamil movie
     //Initialize the browser
-    setHTTPProxy()
+
+    //TODO: Enebale later
+    //setHTTPProxy()
+
     val browser = openBrowser()
 
     try {
@@ -237,7 +336,7 @@ fun main(vararg  args: String){
         //TODO: Enebale later if (!canProceed()) System.exit(5)
 
         //Songs details are ready, Download
-        downloadSongs(songsDownloadBaseDir+"/"+movieName,songsMap)
+        downloadSongs(songsDownloadBaseDir.absolutePath+"/"+movieName,songsMap)
 
         //TODO: Test purpose
         //downloadSingleSongFromURL("/tmp/vip2","1. Dooram Nillu.mp3","http://intamil.co/song/2430/Dooram-Nillu")
@@ -247,5 +346,7 @@ fun main(vararg  args: String){
         ex.printStackTrace()
     }
 
+    println(Ansi.ansi().fg(Ansi.Color.GREEN).a("INFO: Took "+TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - startTime)+" Minutes to complete").reset())
+    println(Ansi.ansi().fg(Ansi.Color.CYAN).a("INFO: Done").reset())
 
 }

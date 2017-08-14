@@ -71,7 +71,8 @@ sourceSets {
 // In this section you declare where to find the dependencies of your project
 repositories {
     //include lib folder
-    flatDir { dirs 'lib' }
+    flatDir { dirs 'dependencies' }
+
     // Remote binary repositories to resolve dependencies
     // You can declare any Maven/Ivy/file repository here.
 
@@ -91,9 +92,8 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.fusesource.jansi:jansi:1.16"
     compile "net.sourceforge.htmlunit:htmlunit:2.27"
-    compile "commons-io:commons-io:2.4"
+    compile "commons-io:commons-io:2.5"
     compile "commons-cli:commons-cli:1.4"
-
 }
 
 jar {
@@ -107,7 +107,7 @@ jar {
 
 shadowJar {
     baseName = myAppName
-    classifier = "FAT"
+    classifier = "EXE"
     version = null
 }
 
