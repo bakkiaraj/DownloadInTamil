@@ -41,6 +41,9 @@
       </MavenImportingSettings>
     </option>
   </component>
+  <component name="PreferredVcsStorage">
+    <preferredVcsName>ApexVCS</preferredVcsName>
+  </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/DownloadInTamil.iml" filepath="$PROJECT_DIR$/DownloadInTamil.iml" />
