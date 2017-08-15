@@ -2,7 +2,7 @@
 
 ## DownloadInTamil-EXE.jar 
 
-DownloadInTamil-EXE.jar is a tool to download tamil MP3 songs of the given movie from intamil website URL. This tool downloads all the songs of the movie in parallel. It will also create correct directory / folder to keep the downloaded songs. In the directory, this tool will create movie info text file with movie details.
+DownloadInTamil-EXE.jar is a tool to download tamil MP3 songs of the given movie from [intamil website URL](http://intamil.in/). This tool downloads all the songs of the movie in parallel. It will also create correct directory / folder to keep the downloaded songs. In the directory, this tool will create movie info text file with movie details.
 
 This tool honors HTTP proxy environment variables (http_proxy, https_proxy)
 
@@ -24,7 +24,7 @@ java -jar DownloadInTamil-EXE.jar
     
 **Note: Java 1.8 is required.**
 
-##Example 
+## Example 
     java -jar DownloadInTamil-EXE.jar --url=http://intamil.in/songs/Vikram-Vedha --outdir=C:/temp
     
     INFO: Start DownloadInTamil-EXE.jar v0.0.5
@@ -55,7 +55,7 @@ java -jar DownloadInTamil-EXE.jar
     INFO: Downloading Ghetto_Chase.mp3 from URL http://intamil.in/download/2419 ...
     ...
     
-##Download
+## Download
 * Latest [DownloadInTamil-EXE.jar](https://github.com/bakkiaraj/DownloadInTamil/blob/master/DownloadInTamil/exe/DownloadInTamil-EXE.jar)
 
 * Java For [Windows](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
