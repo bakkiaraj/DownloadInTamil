@@ -2,7 +2,7 @@
 * Author: Bakki */
 
 group 'com.saaral'
-version '0.0.1'
+version '0.0.5'
 description 'Kotlin Sample app - Build with Gradle'
 
 def myAppName = 'DownloadInTamil' // local variable
@@ -114,7 +114,7 @@ shadowJar {
 runShadow {
     standardInput = System.in
     //opt1 is coming from Run configuration of the IDEA , As a -Popt1
-    args = ['rer','ll']
+    args = ["--url=http://intamil.in/songs/Katha-Nayagan","--outdir=C:/Temp","--no-proxy"]
 }
 
 clean {
