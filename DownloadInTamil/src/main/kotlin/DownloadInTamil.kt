@@ -124,8 +124,8 @@ fun downloadSingleSongFromURL(downloadDirectory: String,songFileName:String,song
     //Find download link from the song link
     //intamil logic http://intamil.co/song/<NUMBER>/Dooram-Nillu => http://intamil.co/download/<NUMBER> is download link
     val songIDRegExPattern = "(?i)\\s*http[s]?://.*/song/(.*)/.*".toRegex()
-    val songID = songIDRegExPattern.matchEntire(songURL)?.groups?.get(1)?.value?.toLong() ?: -1.toLong()
-    if (songID == -1.toLong()){
+    val songID = songIDRegExPattern.matchEntire(songURL)?.groups?.get(1)?.value?.toLong() ?: (-1).toLong()
+    if (songID == (-1).toLong()){
         println(Ansi.ansi().fg(Ansi.Color.RED).a("INFO: Can not find intamil songid from URL $songURL into $downloadDirectory ...").reset())
         return false
     }

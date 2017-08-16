@@ -35,7 +35,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="DownloadInTamil_main" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
