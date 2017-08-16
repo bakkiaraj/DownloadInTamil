@@ -288,7 +288,7 @@ fun main(vararg  args: String){
         println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Java version 1.8 or latest is needed. Found Java "+ getJavaVersion()).reset())
         exitProcess(4)
     }
-
+    println(Ansi.ansi().fg(Ansi.Color.CYAN).a("INFO: Using Java  "+ getJavaVersion()).reset())
     //Handle command line options
     val cmdLineOptionsTemplate = defineCmdLineOptions()
     var cmdLineParser : Any? = null
