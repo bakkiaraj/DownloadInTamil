@@ -260,6 +260,14 @@ fun openBrowser() : WebClient {
     return browser
 }
 
+fun getJavaVersion() : Double {
+    val version = System.getProperty("java.version") ?: "0.0.0"
+    var pos = version.indexOf('.')
+    pos = version.indexOf('.', pos + 1)
+
+    return (version.substring(0, pos)).toDouble()
+}
+
 fun main(vararg  args: String){
 
     getLogger("com.gargoylesoftware").level = Level.OFF
@@ -273,6 +281,13 @@ fun main(vararg  args: String){
         val myJarVersion = this::class.java.`package`.implementationVersion ?: "0.0.0"
     }
     println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Start "+MyDetails.myJarFileName+" v"+MyDetails.myJarVersion).reset())
+
+    //Check for Java 1.8
+    if (getJavaVersion() < 1.8) // We Support only Java 1.8
+    {
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Java version 1.8 or latest is needed. Found Java "+ getJavaVersion()).reset())
+        exitProcess(4)
+    }
 
     //Handle command line options
     val cmdLineOptionsTemplate = defineCmdLineOptions()

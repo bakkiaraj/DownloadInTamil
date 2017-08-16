@@ -2,7 +2,7 @@
 * Author: Bakki */
 
 group 'com.saaral'
-version '0.0.5'
+version '0.1.0'
 description 'Kotlin Sample app - Build with Gradle'
 
 def myAppName = 'DownloadInTamil' // local variable
@@ -11,7 +11,7 @@ project.ext.set('javahome', System.env['JAVA_HOME'])
 //Dependencies for the gradle build script itself
 buildscript {
 
-    ext.kotlin_version = '1.1.3-2'
+    ext.kotlin_version = '1.1.4'
     ext.shadowplugin_version = '2.0.0' // from https://github.com/johnrengelman/shadow
 
     repositories {
