@@ -59,3 +59,6 @@ java -jar DownloadInTamil-EXE.jar
 * Latest [DownloadInTamil-EXE.jar](https://github.com/bakkiaraj/DownloadInTamil/blob/master/DownloadInTamil/exe/DownloadInTamil-EXE.jar)
 
 * Java For [Windows](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
+
+## Contribute 
+This project is developed in [Kotlin](kotlinlang.org/) its a good start for developer who has limited knowledge in Java and like to learn Kotlin. 
