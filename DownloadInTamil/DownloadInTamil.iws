@@ -5,14 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c6ee7fef-671d-4a53-afa8-fd9863a4e880" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/exe/DownloadInTamil-EXE.jar" afterPath="$PROJECT_DIR$/exe/DownloadInTamil-EXE.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DownloadInTamil.iml" afterPath="$PROJECT_DIR$/DownloadInTamil.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DownloadInTamil.iws" afterPath="$PROJECT_DIR$/DownloadInTamil.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DownloadInTamil_main.iml" afterPath="$PROJECT_DIR$/DownloadInTamil_main.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DownloadInTamil_test.iml" afterPath="$PROJECT_DIR$/DownloadInTamil_test.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/kotlin/DownloadInTamil.kt" afterPath="$PROJECT_DIR$/src/main/kotlin/DownloadInTamil.kt" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -946,7 +939,21 @@
       <option name="project" value="LOCAL" />
       <updated>1502874340061</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Fixed #2 Its possible to search for movie name and download songs from intamil website.">
+      <created>1503058561028</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1503058561028</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Fixed #2 Its possible to search for movie name and download songs from intamil website.">
+      <created>1503058650804</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1503058650804</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TodoView">
@@ -979,10 +986,10 @@
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3898305" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3903819" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32909605" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32909605" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21335927" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21335927" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21206225" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -1046,7 +1053,8 @@
     <MESSAGE value="Updated README.MD" />
     <MESSAGE value="Fixed #1 Check for Java version." />
     <MESSAGE value="Fixed #1 Added Java version in the print as well." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed #1 Added Java version in the print as well." />
+    <MESSAGE value="Fixed #2 Its possible to search for movie name and download songs from intamil website." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed #2 Its possible to search for movie name and download songs from intamil website." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
