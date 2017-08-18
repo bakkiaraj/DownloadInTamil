@@ -12,6 +12,7 @@ import org.fusesource.jansi.Ansi
 import java.io.File
 import java.net.URL
 import java.net.URLDecoder
+import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -25,21 +26,34 @@ internal var proxyHostName = ""
 internal var proxyPort =0
 internal var intamilHostName = ""
 internal var intamilProto = ""
+internal var intamilMovieSearchSiteBaseForMovieNameStartsWithNumbers = "http://intamil.in/movie-alphabet/0-9"
+internal var intamilMovieSearchSiteBaseForMovieNameStartsWithAlphabets = "http://intamil.in/movie-alphabet"
+internal var NEW_LINE=System.lineSeparator() ?: "\n"
 
 fun defineCmdLineOptions():Options {
     return Options().apply {
 
-        addOption(with(Option.builder("U")){
-             argName("InTamil_URL")
-             desc("intamil.in movie URL to download songs. Ex: http://intamil.in/songs/Katha-Nayagan")
+        addOption(with(Option.builder()){
+            argName("intamil_Movie_Name")
+            desc("Tamil Movie Name to search in intamil.in and download songs. Ex: vivegam . [Optional when --url option is provided.]")
+            longOpt("search")
+            numberOfArgs(1)
+            required(false)
+            type(String::class.java) //Refer PatternOptionBuilder doc for types
+            build()
+        })
+
+        addOption(with(Option.builder()){
+             argName("intamil_movie_URL")
+             desc("intamil.in movie URL to download songs. Ex: http://intamil.in/songs/Mersal . [Optional when --search option is provided.]")
              longOpt("url")
              numberOfArgs(1)
-             required(true)
+             required(false)
              type(URL::class.java) //Refer PatternOptionBuilder doc for types
              build()
          })
 
-        addOption(with(Option.builder("O")){
+        addOption(with(Option.builder()){
             argName("Output_Directory")
             desc("Output directory where movie specific folders will get created to download songs. Ex:C:/Temp")
             longOpt("outdir")
@@ -61,7 +75,7 @@ fun defineCmdLineOptions():Options {
 
         addOption(with(Option.builder()){
             argName("No Proxy")
-            desc("Dont use System Proxy Environment Variables (http_proxy, https_proxy)")
+            desc("Dont honor System Proxy Environment Variables (http_proxy, https_proxy)")
             longOpt("no-proxy")
             optionalArg(false)
             numberOfArgs(0)
@@ -72,24 +86,23 @@ fun defineCmdLineOptions():Options {
 }
 
 fun showHelp(cmdLineOptionsTemplate:Options, myJarFileName:String,myJarVersion:String, myJarFullPath:String) {
-    val header="$myJarFileName v$myJarVersion is a tool to download all the movie songs from http://intamil.in website.\n" +
-            " intamil.in website do not have option to download all the songs of a movie at one go. This tool download all songs in parallel."
-    val footer="(c) Bakkiaraj Murugesan \n"+" https://bakkiaraj.github.io/DownloadInTamil"+"\n License: MIT License"+"\n Local Install: $myJarFullPath"
+    val header="$myJarFileName v$myJarVersion is a tool to download all the movie songs from http://intamil.in website.$NEW_LINE" +
+            " intamil.in website do not have option to download all the songs of a movie at one go. This tool download all songs in parallel. This tool also can search movie from intamil website."
+    val footer="(c) Bakkiaraj Murugesan $NEW_LINE https://bakkiaraj.github.io/DownloadInTamil $NEW_LINE License: MIT License $NEW_LINE Local Install: $myJarFullPath"
 
     HelpFormatter().apply {
         //descPadding = 10
         //leftPadding = 20
         width=180
-        //optPrefix="\n-"
         printHelp(Ansi.ansi().fg(Ansi.Color.GREEN).a("java -jar $myJarFileName [Options]").toString(),
-                Ansi.ansi().fg(Ansi.Color.DEFAULT).a("\n $header \n\n[Options]").toString(),
+                Ansi.ansi().fg(Ansi.Color.DEFAULT).a("$NEW_LINE $header $NEW_LINE $NEW_LINE[Options]").toString(),
                 cmdLineOptionsTemplate,
-                Ansi.ansi().fg(Ansi.Color.CYAN).a("\n $footer \n").reset().toString())
+                Ansi.ansi().fg(Ansi.Color.CYAN).a("$NEW_LINE $footer $NEW_LINE").reset().toString())
     }
     exitProcess(2)
 }
 
-fun canProceed() : Boolean {
+/*fun canProceed() : Boolean {
     var goAhead : Boolean? = null
     val console=System.console()
     var userInput = "N"
@@ -110,7 +123,7 @@ fun canProceed() : Boolean {
         }
     }
     return goAhead
-}
+}*/
 
 fun downloadSingleSongFromURL(downloadDirectory: String,songFileName:String,songURL:String) : Boolean {
 
@@ -150,7 +163,7 @@ fun downloadSingleSongFromURL(downloadDirectory: String,songFileName:String,song
     }
     catch (ex: Exception){
 
-        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Downloading $songFN from $songDownloadInTamilURL"+ex.message))
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Downloading $songFN from $songDownloadInTamilURL"+ex.message).reset())
         ex.printStackTrace()
         return false
     }
@@ -169,7 +182,7 @@ fun downloadSongs(downloadDirectory: String, songsNameAndURL:LinkedHashMap<Strin
     }
     catch (ex: Exception){
         println("Can not create directory $downloadDirectory. Stop")
-        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: "+ex.message))
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: "+ex.message).reset())
         ex.printStackTrace()
         exitProcess(4)
     }
@@ -192,7 +205,7 @@ fun downloadSongs(downloadDirectory: String, songsNameAndURL:LinkedHashMap<Strin
 
         //Get the Download status results. Future get is a blocking call
         downloadStatusFutureList.forEach {
-            val downloadStatus = it.get() ?: false
+            val downloadStatus = it.get() == true
             if (downloadStatus) numberofSongsDownloaded++
         }
 
@@ -204,7 +217,7 @@ fun downloadSongs(downloadDirectory: String, songsNameAndURL:LinkedHashMap<Strin
     }
     catch (ex: Exception){
         jobExecutor.shutdownNow()
-        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: "+ex.message))
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: "+ex.message).reset())
         ex.printStackTrace()
     }
 
@@ -236,10 +249,10 @@ fun setHTTPProxy(){
 fun openBrowser() : WebClient {
 
     val browser = if (proxyHostName != "" && proxyPort !=0){
-        WebClient(BrowserVersion.CHROME,proxyHostName,proxyPort)
+        WebClient(BrowserVersion.FIREFOX_52,proxyHostName,proxyPort)
     }
     else{
-        WebClient(BrowserVersion.CHROME)
+        WebClient(BrowserVersion.FIREFOX_52)
     }
     browser.options.apply {
         isUseInsecureSSL = true
@@ -253,9 +266,10 @@ fun openBrowser() : WebClient {
         isDownloadImages = false
         isGeolocationEnabled = false
         isPrintContentOnFailingStatusCode = true
-        timeout=200000
+        timeout=600000 //In Milli seconds, 10 minutes
+
     }
-    browser.waitForBackgroundJavaScript(200000)
+    browser.waitForBackgroundJavaScript(240000) // 4Mins
 
     return browser
 }
@@ -266,6 +280,108 @@ fun getJavaVersion() : Double {
     pos = version.indexOf('.', pos + 1)
 
     return (version.substring(0, pos)).toDouble()
+}
+
+private fun askUserInputNumber(maxCount:Int):Int{
+    println("")
+    val console = Scanner(System.`in`)
+    while (true) {
+        try {
+            println(Ansi.ansi().fg(Ansi.Color.YELLOW).a("ASK: Enter number from 1 to $maxCount : ").reset())
+            val userInput = console.nextInt()
+            if (userInput in 1..maxCount) return userInput
+        }
+        catch (ex: InputMismatchException){
+            println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Wakeup. Enter only numbers and press enter.").reset())
+            console.nextLine()
+        }
+        catch (ex: Exception) {
+            //If Can not read from Console , Make it as a false
+            println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Can not read from Console " + ex.message).reset())
+            ex.printStackTrace()
+            exitProcess(12)
+        }
+    }
+}
+
+fun searchAndFindMovieURL (movieSearchString: String): URL {
+    //Sanitize user input
+    var searchString = movieSearchString.replace("""\r?\n""".toRegex(),"") //Remove new lines
+    searchString = searchString.replace("""^\s+""".toRegex(),"") //Remove Leading Spaces
+    searchString = searchString.replace("""\s+$""".toRegex(),"") //Remove trailing Spaces
+
+    println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Searching Movie Name contains [$searchString] in intamil website").reset())
+    //Set the search base URL
+    val searchBaseURL = if (searchString.matches("""\w+""".toRegex())){
+        URL(intamilMovieSearchSiteBaseForMovieNameStartsWithAlphabets+"/"+searchString[0].toLowerCase())
+    }else{
+        URL(intamilMovieSearchSiteBaseForMovieNameStartsWithNumbers)
+    }
+
+    var selectedMovieName:String
+    var selectedMovieURL:String // The var should be initialized before first use. in such case, type is enough.
+
+    val movieNameAndURLIndexSortedMap = sortedMapOf<String,String>()
+    val movieNameRegEx = """(?i)$searchString""".toRegex()
+
+    try {
+        //Get the index URL
+        println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Downloading Movie Index from "+searchBaseURL.toString()+" Wait...").reset())
+        val browser = openBrowser()
+        val movieIndexPage = browser.getPage<HtmlPage>(searchBaseURL)
+        val moviesHtmlDivList = movieIndexPage.getByXPath<HtmlDivision>("//div[contains(@class,'movie_icon')]")
+        println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Done Downloaded Movie Index from "+searchBaseURL.toString()).reset())
+
+        //Processing the movies
+        moviesHtmlDivList.forEach {
+            val movieURL = it.getByXPath<HtmlAnchor>("./a").firstOrNull()?.hrefAttribute ?: "!Unknown!"
+            val movieName = it.getByXPath<DomText>(".//strong/text()").firstOrNull()?.data ?: "!Unknown!"
+            if (movieURL !="!Unknown!" &&  movieName !="!Unknown!" ) {
+                //Look for matched moviename from index
+                if (movieNameRegEx.containsMatchIn(movieName)) {
+                    movieNameAndURLIndexSortedMap[movieName] = movieURL
+                }
+            }
+
+        }
+    }
+    catch (ex:Exception){
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: "+ex.message).reset())
+        ex.printStackTrace()
+    }
+    // If not found
+    if (movieNameAndURLIndexSortedMap.isEmpty()){
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Can not find $searchString movie in $searchBaseURL using regex "+movieNameRegEx.toString()).reset())
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: May be movie songs are not yet uploaded. Can not continue. Quit.").reset())
+        exitProcess(10)
+    }
+    //If more items are found
+    if (movieNameAndURLIndexSortedMap.count() > 1 ){
+        println("")
+        println(Ansi.ansi().fg(Ansi.Color.YELLOW).a("INFO: Multiple Movies are found. You need to *Select*").reset())
+        var item=0
+        val matchedMoviesList = movieNameAndURLIndexSortedMap.keys.toList()
+        matchedMoviesList.forEach {
+            item++
+            println(Ansi.ansi().fg(Ansi.Color.YELLOW).a("[$item] $it").reset())
+        }
+        val userInput= askUserInputNumber(item)
+        selectedMovieName = matchedMoviesList[userInput-1] ?: "!Unknown!" //Because index start from 0
+        selectedMovieURL = movieNameAndURLIndexSortedMap[selectedMovieName] ?: "!Unknown!"
+    }
+    else{
+        //Single item
+        selectedMovieName = movieNameAndURLIndexSortedMap.firstKey() ?: "!Unknown!"
+        selectedMovieURL = movieNameAndURLIndexSortedMap[selectedMovieName] ?: "!Unknown!"
+    }
+
+    return if (selectedMovieName !="!Unknown!" &&  selectedMovieURL !="!Unknown!" ) {
+        println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Found Movie Name: $selectedMovieName , in URL: $selectedMovieURL").reset())
+        URL(selectedMovieURL)
+    } else {
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Can not retrieve selected movie name and url. Internal Error. Quit").reset())
+        exitProcess(12)
+    }
 }
 
 fun main(vararg  args: String){
@@ -300,10 +416,26 @@ fun main(vararg  args: String){
         ex.printStackTrace()
     }
     //Check for null and it should be CommandLine object. This line enables kotlin smart cast
-    //After this if, cmdLineParser is smartCast to CommandLine
+    //After this "if loop", cmdLineParser is smartCast to CommandLine
     if (cmdLineParser == null || cmdLineParser !is CommandLine) throw RuntimeException("Command Line Options are null")
 
-    val movieURL =  cmdLineParser.getParsedOptionValue("url") as URL
+    if (! cmdLineParser.hasOption("url") && ! cmdLineParser.hasOption("search")){
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Either --url=<intamil movie url> or --search=<moviename> is must.").reset())
+        exitProcess(7)
+    }
+
+    if (cmdLineParser.hasOption("url") && cmdLineParser.hasOption("search")){
+        println(Ansi.ansi().fg(Ansi.Color.CYAN).a("WARNING: --url and --search options are passed. --url only will be considered.").reset())
+        exitProcess(7)
+    }
+
+    val movieURL =   if (cmdLineParser.hasOption("url")) {
+        cmdLineParser.getParsedOptionValue("url") as URL
+    }
+    else {
+        searchAndFindMovieURL(cmdLineParser.getParsedOptionValue("search") as String)
+    }
+
     val songsDownloadBaseDir = cmdLineParser.getParsedOptionValue("outdir") as File
 
     //Validate inputs
@@ -348,7 +480,7 @@ fun main(vararg  args: String){
         songsHtmlDivList.forEach {
             //val songName = it.getByXPath<HtmlAnchor>("a").firstOrNull()?.asText() ?: "Unknown"
             val songName = it.asText() ?: "!Unknown!"
-            val songURL = it.getByXPath<HtmlAnchor>("a").firstOrNull()?.hrefAttribute ?: "!Unknown!"
+            val songURL = it.getByXPath<HtmlAnchor>("./a").firstOrNull()?.hrefAttribute ?: "!Unknown!"
             if (songName !="!Unknown!" &&  songURL !="!Unknown!" ) {
                 songsMap[songURL]=songName
                 println("\t" + songName)
@@ -364,16 +496,16 @@ fun main(vararg  args: String){
 
         //Save movie details in file
         File(songsDownloadBaseDir.absolutePath+"/"+movieName+"/info.txt").writeText(
-                "Movie: $movieName\n"+
-                        "Director: $directorName\n"+
-                        "Music Director: $musicDirectorName\n"+
-                        "Cast: $castName\n"
+                "Movie: $movieName"+System.lineSeparator()+
+                        "Director: $directorName"+System.lineSeparator()+
+                        "Music Director: $musicDirectorName"+System.lineSeparator()+
+                        "Cast: $castName"+System.lineSeparator()
         )
 
         //downloadSingleSongFromURL("/tmp/vip2","1. Dooram Nillu.mp3","http://intamil.co/song/2430/Dooram-Nillu")
     }
     catch (ex:Exception){
-        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: "+ex.message))
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: "+ex.message).reset())
         ex.printStackTrace()
     }
 
