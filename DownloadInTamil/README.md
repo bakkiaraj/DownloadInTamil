@@ -1,6 +1,6 @@
 # Download Tamil Songs from intamil website
 
-## [DownloadInTamil-EXE.jar](https://github.com/bakkiaraj/DownloadInTamil/blob/master/DownloadInTamil/exe/DownloadInTamil-EXE.jar)
+## [DownloadInTamil-EXE.jar](https://github.com/bakkiaraj/DownloadInTamil/raw/master/DownloadInTamil/exe/DownloadInTamil-EXE.jar)
 
 DownloadInTamil-EXE.jar is a tool to download tamil MP3 songs of the given movie from [intamil website URL](http://intamil.in/) or it can search the movie name and download the songs.
 This tool downloads all the songs of the movie in parallel.
@@ -115,7 +115,7 @@ java -jar DownloadInTamil-EXE.jar <Options>
 
 
 ## Download
-* Latest [DownloadInTamil-EXE.jar](https://github.com/bakkiaraj/DownloadInTamil/blob/master/DownloadInTamil/exe/DownloadInTamil-EXE.jar)
+* Latest Binary Release [DownloadInTamil-EXE.jar](https://github.com/bakkiaraj/DownloadInTamil/raw/master/DownloadInTamil/exe/DownloadInTamil-EXE.jar)
 
 * Java For [Windows](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
 
