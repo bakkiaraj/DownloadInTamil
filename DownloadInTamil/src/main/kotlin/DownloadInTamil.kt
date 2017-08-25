@@ -446,6 +446,7 @@ fun main(vararg  args: String){
     }
     if (!songsDownloadBaseDir.exists() || !songsDownloadBaseDir.isDirectory || !songsDownloadBaseDir.canWrite()){
         println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: $songsDownloadBaseDir does not exists OR its not a writable directory / folder.").reset())
+        exitProcess(9)
     }
 
     //Update global vars

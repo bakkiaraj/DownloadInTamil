@@ -11,7 +11,7 @@ project.ext.set('javahome', System.env['JAVA_HOME'])
 //Dependencies for the gradle build script itself
 buildscript {
 
-    ext.kotlin_version = '1.1.4'
+    ext.kotlin_version = '1.1.4-2'
     ext.shadowplugin_version = '2.0.0' // from https://github.com/johnrengelman/shadow
 
     repositories {
@@ -114,7 +114,8 @@ shadowJar {
 runShadow {
     standardInput = System.in
     //opt1 is coming from Run configuration of the IDEA , As a -Popt1
-    args = ["--url=http://intamil.in/songs/Katha-Nayagan","--outdir=C:/Temp","--no-proxy"]
+    //args = ["--url=http://intamil.in/songs/Katha-Nayagan","--outdir=.","--no-proxy"]
+    args = ["--help"]
 }
 
 clean {
