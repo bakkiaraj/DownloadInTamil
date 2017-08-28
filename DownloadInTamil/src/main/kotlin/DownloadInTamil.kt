@@ -9,6 +9,7 @@ import org.apache.commons.cli.*
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.fusesource.jansi.Ansi
+import org.fusesource.jansi.AnsiConsole
 import java.io.File
 import java.net.URL
 import java.net.URLDecoder
@@ -318,8 +319,8 @@ fun searchAndFindMovieURL (movieSearchString: String): URL {
         URL(intamilMovieSearchSiteBaseForMovieNameStartsWithNumbers)
     }
 
-    var selectedMovieName:String
-    var selectedMovieURL:String // The var should be initialized before first use. in such case, type is enough.
+    val selectedMovieName:String
+    val selectedMovieURL:String // The var should be initialized before first use. in such case, type is enough.
 
     val movieNameAndURLIndexSortedMap = sortedMapOf<String,String>()
     val movieNameRegEx = """(?i)$searchString""".toRegex()
@@ -348,6 +349,8 @@ fun searchAndFindMovieURL (movieSearchString: String): URL {
     catch (ex:Exception){
         println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: "+ex.message).reset())
         ex.printStackTrace()
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Can not continue. Quit.").reset())
+        exitProcess(13)
     }
     // If not found
     if (movieNameAndURLIndexSortedMap.isEmpty()){
@@ -387,6 +390,7 @@ fun searchAndFindMovieURL (movieSearchString: String): URL {
 fun main(vararg  args: String){
 
     getLogger("com.gargoylesoftware").level = Level.OFF
+    AnsiConsole.systemInstall()
 
     //Set
     val startTime = System.currentTimeMillis()
@@ -418,6 +422,9 @@ fun main(vararg  args: String){
     //Check for null and it should be CommandLine object. This line enables kotlin smart cast
     //After this "if loop", cmdLineParser is smartCast to CommandLine
     if (cmdLineParser == null || cmdLineParser !is CommandLine) throw RuntimeException("Command Line Options are null")
+
+    //Set the HTTP proxy
+    if (! cmdLineParser.hasOption("no-proxy")) setHTTPProxy()
 
     if (! cmdLineParser.hasOption("url") && ! cmdLineParser.hasOption("search")){
         println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Either --url=<intamil movie url> or --search=<moviename> is must.").reset())
@@ -457,8 +464,6 @@ fun main(vararg  args: String){
     val songsMap = linkedMapOf<String,String>()
     //Download the HTML page of the intamil movie
     //Initialize the browser
-    if (! cmdLineParser.hasOption("no-proxy")) setHTTPProxy()
-
     val browser = openBrowser()
 
     try {
@@ -513,4 +518,5 @@ fun main(vararg  args: String){
     println(Ansi.ansi().fg(Ansi.Color.GREEN).a("INFO: Took "+TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTime)+" Seconds to complete").reset())
     println(Ansi.ansi().fg(Ansi.Color.CYAN).a("INFO: Done").reset())
 
+    AnsiConsole.systemUninstall()
 }

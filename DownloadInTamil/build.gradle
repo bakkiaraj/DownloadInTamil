@@ -2,7 +2,7 @@
 * Author: Bakki */
 
 group 'com.saaral'
-version '0.2.0'
+version '0.3.0'
 description 'Kotlin Sample app - Build with Gradle'
 
 def myAppName = 'DownloadInTamil' // local variable
@@ -11,7 +11,7 @@ project.ext.set('javahome', System.env['JAVA_HOME'])
 //Dependencies for the gradle build script itself
 buildscript {
 
-    ext.kotlin_version = '1.1.4-2'
+    ext.kotlin_version = '1.1.4'
     ext.shadowplugin_version = '2.0.0' // from https://github.com/johnrengelman/shadow
 
     repositories {
@@ -32,6 +32,8 @@ buildscript {
 }
 
 //Add your plugins of needs
+apply plugin: 'idea'
+apply plugin: 'eclipse'
 apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: 'application'
@@ -153,7 +155,7 @@ task buildExecutableJar(type: Copy) {
 // uses 3.5 all (src+bin) version of gradle. SRC is needed for IDE to show help on gradle file
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.1-rc-2'
+    gradleVersion = '4.1'
     setDistributionType(Wrapper.DistributionType.ALL)
 }
 
