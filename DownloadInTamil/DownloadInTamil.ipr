@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AndroidDexCompilerConfiguration">
+    <option name="MAX_HEAP_SIZE" value="900" />
+  </component>
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8">
       <module name="DownloadInTamil_main" target="1.8" />
       <module name="DownloadInTamil_test" target="1.8" />
     </bytecodeTargetLevel>
@@ -28,6 +31,16 @@
     </profile>
     <version value="1.0" />
   </component>
+  <component name="Kotlin2JsCompilerArguments">
+    <option name="sourceMapPrefix" value="" />
+    <option name="sourceMapEmbedSources" value="inlining" />
+  </component>
+  <component name="Kotlin2JvmCompilerArguments">
+    <option name="jvmTarget" value="1.8" />
+  </component>
+  <component name="KotlinCompilerSettings">
+    <option name="additionalArguments" value="-version -verbose -debug" />
+  </component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -43,6 +56,23 @@
   </component>
   <component name="PreferredVcsStorage">
     <preferredVcsName>ApexVCS</preferredVcsName>
+  </component>
+  <component name="ProjectCodeStyleSettingsManager">
+    <option name="PER_PROJECT_SETTINGS">
+      <value>
+        <option name="LINE_SEPARATOR" value="&#10;" />
+        <GroovyCodeStyleSettings>
+          <option name="USE_FLYING_GEESE_BRACES" value="true" />
+        </GroovyCodeStyleSettings>
+        <codeStyleSettings language="Groovy">
+          <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
+        </codeStyleSettings>
+      </value>
+    </option>
+    <option name="PREFERRED_PROJECT_CODE_STYLE" value="Default" />
+  </component>
+  <component name="ProjectDictionaryState">
+    <dictionary name="nxp33721" />
   </component>
   <component name="ProjectModuleManager">
     <modules>
@@ -143,6 +173,11 @@
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+  </component>
+  <component name="gdphConfig">
+    <option name="first" value="false" />
+    <option name="useMavenIndex" value="true" />
+    <option name="useNexus" value="true" />
   </component>
   <component name="libraryTable">
     <library name="Gradle: commons-cli:commons-cli:1.4">
@@ -388,5 +423,8 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/xml-apis/xml-apis/1.4.01/5502da0c4c0a7916a604356ef19394ccfa30cd4b/xml-apis-1.4.01-sources.jar!/" />
       </SOURCES>
     </library>
+  </component>
+  <component name="uidesigner-configuration">
+    <option name="INSTRUMENT_CLASSES" value="false" />
   </component>
 </project>
