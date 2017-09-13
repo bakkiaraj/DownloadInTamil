@@ -2,7 +2,7 @@
 * Author: Bakki */
 
 group 'com.saaral'
-version '0.4.0'
+version '0.5.0'
 description 'Kotlin Sample app - Build with Gradle'
 
 def myAppName = 'DownloadInTamil' // local variable
@@ -11,7 +11,7 @@ project.ext.set('javahome', System.env['JAVA_HOME'])
 //Dependencies for the gradle build script itself
 buildscript {
 
-    ext.kotlin_version = '1.1.4'
+    ext.kotlin_version = '1.1.4-3'
     ext.shadowplugin_version = '2.0.0' // from https://github.com/johnrengelman/shadow
 
     repositories {
@@ -96,6 +96,7 @@ dependencies {
     compile "net.sourceforge.htmlunit:htmlunit:2.27"
     compile "commons-io:commons-io:2.5"
     compile "commons-cli:commons-cli:1.4"
+    compile 'org.apache.commons:commons-lang3:3.5' //https://commons.apache.org/proper/commons-lang/
 }
 
 jar {

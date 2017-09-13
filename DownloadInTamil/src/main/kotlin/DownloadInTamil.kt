@@ -9,6 +9,8 @@ import com.gargoylesoftware.htmlunit.html.*
 import org.apache.commons.cli.*
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
+import org.apache.commons.lang3.builder.RecursiveToStringStyle
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder
 import org.fusesource.jansi.Ansi
 import org.fusesource.jansi.AnsiConsole
 import java.io.File
@@ -22,11 +24,10 @@ import java.util.logging.Level
 import java.util.logging.Logger.getLogger
 import kotlin.system.exitProcess
 
-
 //Globals , Visible to this IDEA module
 internal var proxyHostName = ""
 internal var proxyPort = 0
-internal var intamilHostName = "intamil.co"
+internal var intamilHostName = "intamil.in" // Looks like intamil.in is always latest, intamil.co is a mirror lag behind in upload songs / sync
 internal var intamilProto = "http"
 internal var intamilMovieSearchSiteBaseForMovieNameStartsWithNumbers = "$intamilProto://$intamilHostName/movie-alphabet/0-9"
 internal var intamilMovieSearchSiteBaseForMovieNameStartsWithAlphabets = "$intamilProto://$intamilHostName/movie-alphabet"
@@ -52,6 +53,16 @@ fun defineCmdLineOptions(): Options {
             numberOfArgs(1)
             required(false)
             type(URL::class.java) //Refer PatternOptionBuilder doc for types
+            build()
+        })
+    
+        addOption(with(Option.builder()) {
+            argName("sync_With_InTamil")
+            desc("Download \'Latest Tamil Songs\' section movie songs in $intamilHostName only if the movie folder not already present in --outdir")
+            longOpt("sync")
+            numberOfArgs(1)
+            required(false)
+            type(Boolean::class.java) //Refer PatternOptionBuilder doc for types
             build()
         })
         
@@ -165,6 +176,8 @@ fun downloadSingleSongFromURL(downloadDirectory: String, songFileName: String, s
     } catch (ex: Exception) {
         
         println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Downloading $songFN from $songDownloadInTamilURL" + ex.message).reset())
+        System.out.flush()
+        System.err.flush()
         ex.printStackTrace()
         return false
     }
@@ -173,7 +186,7 @@ fun downloadSingleSongFromURL(downloadDirectory: String, songFileName: String, s
     return true
 }
 
-fun downloadSongs(downloadDirectory: String, songsNameAndURL: LinkedHashMap<String, String>): Int {
+fun downloadMovieSongsInParallel(downloadDirectory: String, songsNameAndURL: LinkedHashMap<String, String>) {
     var numberofSongsDownloaded = 0
     val numberofProcessors = Runtime.getRuntime().availableProcessors() - 1  // Leave one for the main processing
     
@@ -181,10 +194,11 @@ fun downloadSongs(downloadDirectory: String, songsNameAndURL: LinkedHashMap<Stri
     try {
         FileUtils.forceMkdir(File(downloadDirectory))
     } catch (ex: Exception) {
-        println("Can not create directory $downloadDirectory. Stop")
-        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: " + ex.message).reset())
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Can not create directory $downloadDirectory. Return" + ex.message).reset())
+        System.out.flush()
+        System.err.flush()
         ex.printStackTrace()
-        exitProcess(4)
+        return
     }
     
     println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Starting $numberofProcessors download process in parallel").reset())
@@ -206,8 +220,7 @@ fun downloadSongs(downloadDirectory: String, songsNameAndURL: LinkedHashMap<Stri
         
         //Get the Download status results. Future get is a blocking call
         downloadStatusFutureList.forEach {
-            val downloadStatus = it.get() == true
-            if (downloadStatus) numberofSongsDownloaded ++
+            if (it.get()) numberofSongsDownloaded ++
         }
         
         //shutdown pool
@@ -218,12 +231,11 @@ fun downloadSongs(downloadDirectory: String, songsNameAndURL: LinkedHashMap<Stri
     } catch (ex: Exception) {
         jobExecutor.shutdownNow()
         println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: " + ex.message).reset())
-        ex.printStackTrace()
+        throw ex
     }
     
     println("INFO: $numberofSongsDownloaded files downloaded in $downloadDirectory")
-    return numberofSongsDownloaded
-    
+    return
 }
 
 /**
@@ -295,8 +307,8 @@ private fun askUserInputNumber(maxCount: Int): Int {
         } catch (ex: Exception) {
             //If Can not read from Console , Make it as a false
             println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Can not read from Console " + ex.message).reset())
-            ex.printStackTrace()
-            exitProcess(12)
+            console.nextLine()
+            throw ex
         }
     }
 }
@@ -343,15 +355,13 @@ fun searchAndFindMovieURL(movieSearchString: String): URL {
         }
     } catch (ex: Exception) {
         println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: " + ex.message).reset())
-        ex.printStackTrace()
-        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Can not continue. Quit.").reset())
-        exitProcess(13)
+        throw ex
     }
     // If not found
     if (movieNameAndURLIndexSortedMap.isEmpty()) {
         println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Can not find $searchString movie in $searchBaseURL using regex " + movieNameRegEx.toString()).reset())
         println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: May be movie songs are not yet uploaded. Can not continue. Quit.").reset())
-        exitProcess(10)
+        throw IllegalStateException("Can not find movie")
     }
     //If more items are found
     if (movieNameAndURLIndexSortedMap.count() > 1) {
@@ -376,9 +386,79 @@ fun searchAndFindMovieURL(movieSearchString: String): URL {
         println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Found Movie Name: $selectedMovieName , in URL: $selectedMovieURL").reset())
         URL(selectedMovieURL)
     } else {
-        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Can not retrieve selected movie name and url. Internal Error. Quit").reset())
-        exitProcess(12)
+        throw IllegalStateException("Can not retrieve selected movie name and url. Internal Error")
     }
+}
+
+fun dump(obj: Any) {
+    println("DUMP:--")
+    println(ReflectionToStringBuilder.toString(obj, RecursiveToStringStyle.MULTI_LINE_STYLE, true, true))
+    println("DUMP:--")
+}
+
+fun downloadAllSongsInMovie(movieURL: URL, songsDownloadBaseDir: File) {
+    if (! movieURL.host.startsWith("intamil")) {
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: $movieURL does not seems to be intamil website like $intamilProto://$intamilHostName etc... , At this time, we support only intamil website."))
+        throw IllegalArgumentException("Movie URL does not seems to be intamil website.")
+    }
+    if (! songsDownloadBaseDir.exists() || ! songsDownloadBaseDir.isDirectory || ! songsDownloadBaseDir.canWrite()) {
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: $songsDownloadBaseDir does not exists OR its not a writable directory / folder.").reset())
+        throw IllegalAccessError("Output Directory Access Error.")
+    }
+    
+    //Update global vars
+    intamilHostName = movieURL.host
+    intamilProto = movieURL.protocol
+    
+    
+    val songsMap = linkedMapOf<String, String>()
+    //Download the HTML page of the intamil movie
+    //Initialize the browser
+    val browser = openBrowser()
+    
+    println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Downloading data from $movieURL . Wait...").reset())
+    val moviePage = browser.getPage<HtmlPage>(movieURL)
+    //println(moviePage.asText())
+    //println(moviePage.asXml())
+    val movieName = moviePage.getByXPath<HtmlFigureCaption>("//div/figure/figcaption")?.firstOrNull()?.asText() ?: "!Unknown!"
+    val directorName = moviePage.getByXPath<HtmlSpan>("//span[contains(@itemprop , 'director')]")?.firstOrNull()?.asText() ?: "!Unknown!"
+    val musicDirectorName = moviePage.getByXPath<HtmlSpan>("//span[contains(@itemprop,'musicBy')]")?.firstOrNull()?.asText() ?: "!Unknown!"
+    val castName = moviePage.getByXPath<HtmlSpan>("//span[contains(@itemprop,'actor')]")?.firstOrNull()?.asText() ?: "!Unknown!"
+    
+    val songsHtmlDivList = moviePage.getByXPath<HtmlDivision>("//div[contains(@class,'song_list_title')]")
+    
+    println(Ansi.ansi().fg(Ansi.Color.GREEN).a("INFO: Movie: " + movieName).reset())
+    println(Ansi.ansi().fg(Ansi.Color.GREEN).a("INFO: Director: " + directorName).reset())
+    println(Ansi.ansi().fg(Ansi.Color.GREEN).a("INFO: Music Director: " + musicDirectorName).reset())
+    println(Ansi.ansi().fg(Ansi.Color.GREEN).a("INFO: Cast: " + castName).reset())
+    
+    if (songsHtmlDivList.size == 0) {
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Can not find any songs in $movieName from $movieURL. Perhaps songs are not yet uploaded. Can not continue.").reset())
+        return
+    }
+    
+    println(Ansi.ansi().fg(Ansi.Color.MAGENTA).a("INFO: ------ Songs -------- "))
+    songsHtmlDivList.forEach {
+        val songName = it.asText() ?: "!Unknown!"
+        val songURL = it.getByXPath<HtmlAnchor>("./a").firstOrNull()?.hrefAttribute ?: "!Unknown!"
+        if (songName != "!Unknown!" && songURL != "!Unknown!") {
+            songsMap[songURL] = songName
+            println("\t" + songName)
+        }
+        
+    }
+    println(Ansi.ansi().fg(Ansi.Color.MAGENTA).a("INFO: ------ Songs -------- ").reset())
+    
+    //Songs details are ready, Download
+    downloadMovieSongsInParallel(songsDownloadBaseDir.absolutePath + "/" + movieName, songsMap)
+    
+    //Save movie details in file
+    File(songsDownloadBaseDir.absolutePath + "/" + movieName + "/info.txt").writeText(
+            "Movie: $movieName" + System.lineSeparator() +
+                    "Director: $directorName" + System.lineSeparator() +
+                    "Music Director: $musicDirectorName" + System.lineSeparator() +
+                    "Cast: $castName" + System.lineSeparator()
+    )
 }
 
 fun main(vararg args: String) {
@@ -403,6 +483,7 @@ fun main(vararg args: String) {
         exitProcess(4)
     }
     println(Ansi.ansi().fg(Ansi.Color.CYAN).a("INFO: Using Java  " + getJavaVersion()).reset())
+    
     //Handle command line options
     val cmdLineOptionsTemplate = defineCmdLineOptions()
     var cmdLineParser: Any? = null
@@ -411,11 +492,14 @@ fun main(vararg args: String) {
     } catch (ex: Exception) {
         println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: " + ex.message).reset())
         showHelp(cmdLineOptionsTemplate, MyDetails.myJarFileName, MyDetails.myJarVersion, MyDetails.myJarFullPath)
-        ex.printStackTrace()
     }
+    
     //Check for null and it should be CommandLine object. This line enables kotlin smart cast
     //After this "if loop", cmdLineParser is smartCast to CommandLine
     if (cmdLineParser == null || cmdLineParser !is CommandLine) throw RuntimeException("Command Line Options are null")
+    
+    //Validate inputs
+    if (cmdLineParser.hasOption("help")) showHelp(cmdLineOptionsTemplate, MyDetails.myJarFileName, MyDetails.myJarVersion, MyDetails.myJarFullPath)
     
     //Set the HTTP proxy
     if (! cmdLineParser.hasOption("no-proxy")) setHTTPProxy()
@@ -433,78 +517,32 @@ fun main(vararg args: String) {
     val movieURL = if (cmdLineParser.hasOption("url")) {
         cmdLineParser.getParsedOptionValue("url") as URL
     } else {
-        searchAndFindMovieURL(cmdLineParser.getParsedOptionValue("search") as String)
+        try {
+            searchAndFindMovieURL(cmdLineParser.getParsedOptionValue("search") as String)
+        } catch (ex: Exception) { //Master Fault handler 1
+            println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Exception while searching for movie").reset())
+            println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: " + ex.message).reset())
+            System.out.flush()
+            System.err.flush()
+            ex.printStackTrace()
+            println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Can not continue. Quit.").reset())
+            exitProcess(20)
+        }
+        
     }
     
     val songsDownloadBaseDir = cmdLineParser.getParsedOptionValue("outdir") as File
     
-    //Validate inputs
-    if (cmdLineParser.hasOption("help")) showHelp(cmdLineOptionsTemplate, MyDetails.myJarFileName, MyDetails.myJarVersion, MyDetails.myJarFullPath)
-    if (! movieURL.host.startsWith("intamil")) {
-        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: $movieURL does not seems to be intamil website like $intamilProto://$intamilHostName etc... , At this time, we support only intamil website."))
-        exitProcess(1)
-    }
-    if (! songsDownloadBaseDir.exists() || ! songsDownloadBaseDir.isDirectory || ! songsDownloadBaseDir.canWrite()) {
-        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: $songsDownloadBaseDir does not exists OR its not a writable directory / folder.").reset())
-        exitProcess(9)
-    }
-    
-    //Update global vars
-    intamilHostName = movieURL.host
-    intamilProto = movieURL.protocol
-    
-    
-    val songsMap = linkedMapOf<String, String>()
-    //Download the HTML page of the intamil movie
-    //Initialize the browser
-    val browser = openBrowser()
-    
+    //Finally Movie URL from intamil.in is ready, Now find all songs from the movie and download them in parallel
     try {
-        println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Downloading data from $movieURL . Wait...").reset())
-        val moviePage = browser.getPage<HtmlPage>(movieURL)
-        //println(moviePage.asText())
-        //println(moviePage.asXml())
-        val movieName = moviePage.getByXPath<HtmlFigureCaption>("//div/figure/figcaption")?.firstOrNull()?.asText() ?: "!Unknown!"
-        val directorName = moviePage.getByXPath<HtmlSpan>("//span[contains(@itemprop , 'director')]")?.firstOrNull()?.asText() ?: "!Unknown!"
-        val musicDirectorName = moviePage.getByXPath<HtmlSpan>("//span[contains(@itemprop,'musicBy')]")?.firstOrNull()?.asText() ?: "!Unknown!"
-        val castName = moviePage.getByXPath<HtmlSpan>("//span[contains(@itemprop,'actor')]")?.firstOrNull()?.asText() ?: "!Unknown!"
-        
-        val songsHtmlDivList = moviePage.getByXPath<HtmlDivision>("//div[contains(@class,'song_list_title')]")
-        
-        println(Ansi.ansi().fg(Ansi.Color.GREEN).a("INFO: Movie: " + movieName).reset())
-        println(Ansi.ansi().fg(Ansi.Color.GREEN).a("INFO: Director: " + directorName).reset())
-        println(Ansi.ansi().fg(Ansi.Color.GREEN).a("INFO: Music Director: " + musicDirectorName).reset())
-        println(Ansi.ansi().fg(Ansi.Color.GREEN).a("INFO: Cast: " + castName).reset())
-        println(Ansi.ansi().fg(Ansi.Color.MAGENTA).a("INFO: ------ Songs -------- "))
-        songsHtmlDivList.forEach {
-            //val songName = it.getByXPath<HtmlAnchor>("a").firstOrNull()?.asText() ?: "Unknown"
-            val songName = it.asText() ?: "!Unknown!"
-            val songURL = it.getByXPath<HtmlAnchor>("./a").firstOrNull()?.hrefAttribute ?: "!Unknown!"
-            if (songName != "!Unknown!" && songURL != "!Unknown!") {
-                songsMap[songURL] = songName
-                println("\t" + songName)
-            }
-            
-        }
-        println(Ansi.ansi().fg(Ansi.Color.MAGENTA).a("INFO: ------ Songs -------- ").reset())
-        
-        //TODO: Enebale later if (!canProceed()) System.exit(5)
-        
-        //Songs details are ready, Download
-        downloadSongs(songsDownloadBaseDir.absolutePath + "/" + movieName, songsMap)
-        
-        //Save movie details in file
-        File(songsDownloadBaseDir.absolutePath + "/" + movieName + "/info.txt").writeText(
-                "Movie: $movieName" + System.lineSeparator() +
-                        "Director: $directorName" + System.lineSeparator() +
-                        "Music Director: $musicDirectorName" + System.lineSeparator() +
-                        "Cast: $castName" + System.lineSeparator()
-        )
-        
-        //downloadSingleSongFromURL("/tmp/vip2","1. Dooram Nillu.mp3","http://intamil.co/song/2430/Dooram-Nillu")
-    } catch (ex: Exception) {
+        downloadAllSongsInMovie(movieURL, songsDownloadBaseDir)
+    } catch (ex: Exception) { //Master Fault handler 2
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Exception while downloading songs from $movieURL in $songsDownloadBaseDir").reset())
         println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: " + ex.message).reset())
+        System.out.flush()
+        System.err.flush()
         ex.printStackTrace()
+        
     }
     
     println(Ansi.ansi().fg(Ansi.Color.GREEN).a("INFO: Took " + TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTime) + " Seconds to complete").reset())
@@ -512,3 +550,4 @@ fun main(vararg args: String) {
     
     AnsiConsole.systemUninstall()
 }
+
