@@ -10,7 +10,7 @@
           <option name="destination" value="$MODULE_DIR$/build/classes/kotlin/main" />
           <option name="noStdlib" value="true" />
           <option name="noReflect" value="true" />
-          <option name="moduleName" value="DownloadInTamil_main" />
+          <option name="moduleName" value="DownloadInTamil" />
           <option name="jvmTarget" value="1.8" />
           <option name="addCompilerBuiltIns" value="true" />
           <option name="loadBuiltInsFromDependencies" value="true" />
@@ -23,7 +23,6 @@
             <array />
           </option>
           <option name="coroutinesState" value="enable" />
-          <option name="verbose" value="true" />
         </compilerArguments>
       </configuration>
     </facet>
@@ -39,7 +38,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.1.4-3" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.1.51" level="project" />
     <orderEntry type="library" name="Gradle: org.fusesource.jansi:jansi:1.16" level="project" />
     <orderEntry type="library" name="Gradle: net.sourceforge.htmlunit:htmlunit:2.27" level="project" />
     <orderEntry type="library" name="Gradle: commons-io:commons-io:2.5" level="project" />

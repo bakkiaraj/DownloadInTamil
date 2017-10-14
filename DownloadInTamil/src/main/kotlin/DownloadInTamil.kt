@@ -60,9 +60,8 @@ fun defineCmdLineOptions(): Options {
             argName("sync_With_InTamil")
             desc("Download \'Latest Tamil Songs\' section movie songs in $intamilHostName only if the movie folder not already present in --outdir")
             longOpt("sync")
-            numberOfArgs(1)
+            numberOfArgs(0)
             required(false)
-            type(Boolean::class.java) //Refer PatternOptionBuilder doc for types
             build()
         })
         
@@ -313,15 +312,22 @@ private fun askUserInputNumber(maxCount: Int): Int {
     }
 }
 
-fun searchAndFindMovieURL(movieSearchString: String): URL {
+fun searchAndFindMovieURL(movieSearchString: String): List<URL> {
     //Sanitize user input
     var searchString = movieSearchString.replace("""\r?\n""".toRegex(), "") //Remove new lines
     searchString = searchString.replace("""^\s+""".toRegex(), "") //Remove Leading Spaces
     searchString = searchString.replace("""\s+$""".toRegex(), "") //Remove trailing Spaces
+
+    //Remove quotes
+    searchString = searchString.replace("""^'""".toRegex(), "")
+    searchString = searchString.replace("""'$""".toRegex(), "")
+    searchString = searchString.replace("""^"""".toRegex(), "")
+    searchString = searchString.replace(""""$""".toRegex(), "")
     
     println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Searching Movie Name contains [$searchString] in intamil website").reset())
     //Set the search base URL
-    val searchBaseURL = if (searchString.matches("""\w+""".toRegex())) {
+    println("*****" + searchString)
+    val searchBaseURL = if (searchString.matches("""^\w+.*""".toRegex())) {
         URL(intamilMovieSearchSiteBaseForMovieNameStartsWithAlphabets + "/" + searchString[0].toLowerCase())
     } else {
         URL(intamilMovieSearchSiteBaseForMovieNameStartsWithNumbers)
@@ -384,7 +390,7 @@ fun searchAndFindMovieURL(movieSearchString: String): URL {
     
     return if (selectedMovieName != "!Unknown!" && selectedMovieURL != "!Unknown!") {
         println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Found Movie Name: $selectedMovieName , in URL: $selectedMovieURL").reset())
-        URL(selectedMovieURL)
+        listOf<URL>(URL(selectedMovieURL))
     } else {
         throw IllegalStateException("Can not retrieve selected movie name and url. Internal Error")
     }
@@ -461,6 +467,10 @@ fun downloadAllSongsInMovie(movieURL: URL, songsDownloadBaseDir: File) {
     )
 }
 
+fun downloadLatestMovieURLs(songsDownloadBaseDir: File): List<URL> {
+    return listOf<URL>(URL("http://aa.com"), URL("http://bb.com"))
+}
+
 fun main(vararg args: String) {
     
     getLogger("com.gargoylesoftware").level = Level.OFF
@@ -496,27 +506,30 @@ fun main(vararg args: String) {
     
     //Check for null and it should be CommandLine object. This line enables kotlin smart cast
     //After this "if loop", cmdLineParser is smartCast to CommandLine
-    if (cmdLineParser == null || cmdLineParser !is CommandLine) throw RuntimeException("Command Line Options are null")
-    
-    //Validate inputs
+    if (cmdLineParser == null || cmdLineParser !is CommandLine) throw RuntimeException("Command Line Options can not be determined.")
+
+    //Check for help
     if (cmdLineParser.hasOption("help")) showHelp(cmdLineOptionsTemplate, MyDetails.myJarFileName, MyDetails.myJarVersion, MyDetails.myJarFullPath)
     
     //Set the HTTP proxy
     if (! cmdLineParser.hasOption("no-proxy")) setHTTPProxy()
-    
-    if (! cmdLineParser.hasOption("url") && ! cmdLineParser.hasOption("search")) {
-        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Either --url=<intamil movie url> or --search=<moviename> is must.").reset())
+    //Set output dir
+    val songsDownloadBaseDir = cmdLineParser.getParsedOptionValue("outdir") as File
+
+    //Validate inputs
+    if (!cmdLineParser.hasOption("url") && !cmdLineParser.hasOption("search") && !cmdLineParser.hasOption("sync")) {
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: --url=<intamil movie url> or --search=<moviename> or --sync options is must.").reset())
         exitProcess(7)
     }
     
     if (cmdLineParser.hasOption("url") && cmdLineParser.hasOption("search")) {
         println(Ansi.ansi().fg(Ansi.Color.CYAN).a("WARNING: --url and --search options are passed. --url only will be considered.").reset())
-        exitProcess(7)
     }
-    
-    val movieURL = if (cmdLineParser.hasOption("url")) {
-        cmdLineParser.getParsedOptionValue("url") as URL
-    } else {
+
+    //Process the inputs
+    val movieURLImmutableList = if (cmdLineParser.hasOption("url")) {
+        listOf<URL>(cmdLineParser.getParsedOptionValue("url") as URL)
+    } else if (cmdLineParser.hasOption("search")) {
         try {
             searchAndFindMovieURL(cmdLineParser.getParsedOptionValue("search") as String)
         } catch (ex: Exception) { //Master Fault handler 1
@@ -525,29 +538,39 @@ fun main(vararg args: String) {
             System.out.flush()
             System.err.flush()
             ex.printStackTrace()
+            System.out.flush()
+            System.err.flush()
             println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Can not continue. Quit.").reset())
             exitProcess(20)
         }
-        
+
+    } else if (cmdLineParser.hasOption("sync")) {
+        downloadLatestMovieURLs(songsDownloadBaseDir)
+    } else {
+        throw IllegalStateException("Can not determine movie URL to download from command line options. --url or --search or --sync option is must.")
     }
-    
-    val songsDownloadBaseDir = cmdLineParser.getParsedOptionValue("outdir") as File
-    
-    //Finally Movie URL from intamil.in is ready, Now find all songs from the movie and download them in parallel
-    try {
-        downloadAllSongsInMovie(movieURL, songsDownloadBaseDir)
-    } catch (ex: Exception) { //Master Fault handler 2
-        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Exception while downloading songs from $movieURL in $songsDownloadBaseDir").reset())
-        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: " + ex.message).reset())
-        System.out.flush()
-        System.err.flush()
-        ex.printStackTrace()
-        
+
+
+    //Finally Movie URLs from intamil.in is ready, Now find all songs from the movie and download them in parallel
+    for (movieURL in movieURLImmutableList) {
+        try {
+            downloadAllSongsInMovie(movieURL, songsDownloadBaseDir)
+        } catch (ex: Exception) { //Master Fault handler 2
+            println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Exception while downloading songs from $movieURL in $songsDownloadBaseDir").reset())
+            println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: " + ex.message).reset())
+            System.out.flush()
+            System.err.flush()
+            ex.printStackTrace()
+            System.out.flush()
+            System.err.flush()
+
+        }
     }
     
     println(Ansi.ansi().fg(Ansi.Color.GREEN).a("INFO: Took " + TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTime) + " Seconds to complete").reset())
     println(Ansi.ansi().fg(Ansi.Color.CYAN).a("INFO: Done").reset())
     
     AnsiConsole.systemUninstall()
+    exitProcess(0) //Quit normally, calling explicit exitProcess allows to call shutdown hooks
 }
 

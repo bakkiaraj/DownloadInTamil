@@ -11,8 +11,8 @@ project.ext.set('javahome', System.env['JAVA_HOME'])
 //Dependencies for the gradle build script itself
 buildscript {
 
-    ext.kotlin_version = '1.1.4-3'
-    ext.shadowplugin_version = '2.0.0' // from https://github.com/johnrengelman/shadow
+    //https://kotlinlang.org/docs/reference/using-gradle.html
+    ext.kotlin_version = '1.1.51'
 
     repositories {
 
@@ -25,9 +25,10 @@ buildscript {
 
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         // When gradle build needs something to run, Its under classpath
-        classpath "com.github.jengelman.gradle.plugins:shadow:$shadowplugin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.1" // from https://github.com/johnrengelman/shadow
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.15"
     }
 }
 
@@ -39,6 +40,7 @@ apply plugin: 'kotlin'
 apply plugin: 'application'
 //http://imperceptiblethoughts.com/shadow/
 apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'org.jetbrains.dokka'
 
 mainClassName = "com.saaral.$myAppName"
 defaultTasks 'run'
@@ -68,6 +70,12 @@ sourceSets {
     //main.java.srcDirs += 'src/main/java'
 
     test.kotlin.srcDirs += 'src/test/kotlin'
+}
+
+//Kotlin Doc config
+dokka {
+    outputFormat = 'html'
+    outputDirectory = "${project.buildDir}/javadoc"
 }
 
 // In this section you declare where to find the dependencies of your project
@@ -118,7 +126,7 @@ runShadow {
     standardInput = System.in
     //opt1 is coming from Run configuration of the IDEA , As a -Popt1
     //args = ["--url=http://intamil.in/songs/Katha-Nayagan","--outdir=.","--no-proxy"]
-    args = ["--help"]
+    args = ["--search='oru naal'","--outdir=c:/temp"]
 }
 
 clean {
