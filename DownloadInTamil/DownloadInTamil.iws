@@ -4,18 +4,8 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c6ee7fef-671d-4a53-afa8-fd9863a4e880" name="Default" comment="Added exe Jar">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dependencies/kotlin-stdlib-1.1.4.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/exe/sample_run.bat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/exe/sample_run.sh" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/_gradle.properties" afterPath="$PROJECT_DIR$/gradle.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/exe/DownloadInTamil-EXE.jar" afterPath="$PROJECT_DIR$/exe/DownloadInTamil-EXE.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DownloadInTamil.ipr" afterPath="$PROJECT_DIR$/DownloadInTamil.ipr" />
+    <list default="true" id="c6ee7fef-671d-4a53-afa8-fd9863a4e880" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DownloadInTamil.iws" afterPath="$PROJECT_DIR$/DownloadInTamil.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DownloadInTamil_main.iml" afterPath="$PROJECT_DIR$/DownloadInTamil_main.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DownloadInTamil_test.iml" afterPath="$PROJECT_DIR$/DownloadInTamil_test.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/kotlin/DownloadInTamil.kt" afterPath="$PROJECT_DIR$/src/main/kotlin/DownloadInTamil.kt" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -1112,7 +1102,7 @@
       <workItem from="1507865904835" duration="20000" />
       <workItem from="1507865973581" duration="430000" />
       <workItem from="1507866808070" duration="1230000" />
-      <workItem from="1507948297458" duration="717000" />
+      <workItem from="1507948297458" duration="873000" />
     </task>
     <task id="LOCAL-00001" summary="Updated tool with command line args templ.">
       <created>1502737758772</created>
@@ -1205,11 +1195,18 @@
       <option name="project" value="LOCAL" />
       <updated>1505326267353</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Added exe Jar">
+      <created>1507950916088</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1507950916088</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="46640000" />
+    <option name="totallyTimeSpent" value="46796000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
