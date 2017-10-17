@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AnalysisUIOptions">
-    <option name="SCOPE_TYPE" value="3" />
-  </component>
   <component name="ChangeListManager">
     <list default="true" id="c6ee7fef-671d-4a53-afa8-fd9863a4e880" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DownloadInTamil.iws" afterPath="$PROJECT_DIR$/DownloadInTamil.iws" />
@@ -60,6 +57,12 @@
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
                 <item name="application" type="c8890929:TasksNode$1" />
               </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="DownloadInTamil" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="other" type="c8890929:TasksNode$1" />
+              </path>
             </expand>
             <select />
           </tree_state>
@@ -68,7 +71,30 @@
     </system>
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="DownloadInTamil.kt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/kotlin/DownloadInTamil.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-782">
+              <caret line="574" column="96" lean-forward="false" selection-start-line="574" selection-start-column="96" selection-end-line="574" selection-end-column="96" />
+              <folding>
+                <element signature="e#54#936#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="176">
+              <caret line="163" column="58" lean-forward="false" selection-start-line="163" selection-start-column="52" selection-end-line="163" selection-end-column="58" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -80,19 +106,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>movieName</find>
-      <find>--se</find>
-      <find>browser</find>
-      <find>forEach</find>
-      <find>timeou</find>
-      <find>[0]</find>
-      <find>ex.</find>
-      <find>ex.m</find>
-      <find>\n</find>
-      <find>installed</find>
-      <find>searchAndFindMovieURL</find>
-      <find>Downloading Movie Index from</find>
-      <find>selectedMovieName</find>
       <find>intamil.in</find>
       <find>Sync</find>
       <find>Downloading data from</find>
@@ -105,11 +118,24 @@
       <find>printStackTrace</find>
       <find>exitP</find>
       <find>intamil</find>
-      <find>intamilHostName</find>
       <find>does not seems to be</find>
       <find>shadowplugin_version</find>
       <find>songsDownloadBaseDir</find>
       <find>out</find>
+      <find>intamilHostName</find>
+      <find>data</find>
+      <find>data</find>
+      <find>warnin</find>
+      <find>info:</find>
+      <find>mirr</find>
+      <find>proxy</find>
+      <find>setHTTPProxy</find>
+      <find>****</find>
+      <find>no p</find>
+      <find>nop</find>
+      <find>proxyDetailsDataObj</find>
+      <find>here</find>
+      <find>hostde</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -669,57 +695,53 @@
             <id />
           </State>
           <State>
-            <id>Android &gt; Lint &gt; Correctness</id>
+            <id>Code style issuesGo</id>
           </State>
           <State>
-            <id>Bitwise operation issuesJava</id>
+            <id>Declaration redundancyJava</id>
           </State>
           <State>
-            <id>Bitwise operation issuesJavaScript</id>
+            <id>GeneralScala</id>
           </State>
           <State>
-            <id>Code style issuesJava</id>
-          </State>
-          <State>
-            <id>Control flow issuesJava</id>
-          </State>
-          <State>
-            <id>Control flow issuesJavaScript</id>
-          </State>
-          <State>
-            <id>GeneralJava</id>
-          </State>
-          <State>
-            <id>Groovy</id>
-          </State>
-          <State>
-            <id>JUnit issuesJava</id>
+            <id>Go</id>
           </State>
           <State>
             <id>Java</id>
           </State>
           <State>
-            <id>JavaScript</id>
+            <id>Java 5Java language level migration aidsJava</id>
           </State>
           <State>
-            <id>Naming ConventionsGroovy</id>
+            <id>Java language level migration aidsJava</id>
           </State>
           <State>
-            <id>Naming conventionsJava</id>
+            <id>Kotlin</id>
           </State>
           <State>
-            <id>Naming conventionsJavaScript</id>
+            <id>Python</id>
           </State>
           <State>
-            <id>Numeric issuesJava</id>
+            <id>Redundant constructsKotlin</id>
           </State>
           <State>
-            <id>Potentially confusing code constructsJavaScript</id>
+            <id>Scala</id>
           </State>
           <State>
-            <id>Threading issuesJava</id>
+            <id>Style issuesKotlin</id>
+          </State>
+          <State>
+            <id>TypeScript</id>
+          </State>
+          <State>
+            <id>Verbose or redundant code constructsJava</id>
           </State>
         </expanded-state>
+        <selected-state>
+          <State>
+            <id>Android</id>
+          </State>
+        </selected-state>
       </profile-state>
     </entry>
   </component>
@@ -739,8 +761,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="AndroidView" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -770,15 +791,16 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="Scratches" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.35106382" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -817,7 +839,24 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Gauge Execution.Specifications">
+  <component name="RunManager" selected="Gradle.DownloadInTamil [buildExecutableJar]">
+    <configuration name="DownloadInTamil [buildDependents]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="buildDependents" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+    </configuration>
     <configuration name="DownloadInTamil [buildExecutableJar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -835,7 +874,7 @@
         <option name="vmOptions" />
       </ExternalSystemSettings>
     </configuration>
-    <configuration name="DownloadInTamil [dokka]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="DownloadInTamil [buildNeeded]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -846,7 +885,24 @@
         </option>
         <option name="taskNames">
           <list>
-            <option value="dokka" />
+            <option value="buildNeeded" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+    </configuration>
+    <configuration name="DownloadInTamil [copyDependsLibs]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="copyDependsLibs" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -868,35 +924,6 @@
         </option>
         <option name="vmOptions" />
       </ExternalSystemSettings>
-    </configuration>
-    <configuration name="DownloadInTamil [run]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="run" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-    </configuration>
-    <configuration name="Specifications" type="executeSpecs" factoryName="Gauge Execution" temporary="true">
-      <setting name="environment" value="" />
-      <setting name="specsToExecute" value="C:\FILES\IDEA_Workspace\DownloadInTamil\DownloadInTamil\specs" />
-      <setting name="tags" value="" />
-      <setting name="parallelNodes" value="" />
-      <setting name="execInParallel" value="false" />
-      <setting name="programParameters" value="" />
-      <setting name="workingDirectory" value="" />
-      <setting name="moduleName" value="DownloadInTamil" />
-      <envMap />
-      <setting name="rowsRange" value="" />
     </configuration>
     <configuration default="true" type="Applet" factoryName="Applet">
       <option name="HTML_USED" value="false" />
@@ -1027,24 +1054,24 @@
       <option name="_new_targetType" value="&quot;PATH&quot;" />
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [dokka]" />
-      <item index="1" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [run]" />
-      <item index="2" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [buildExecutableJar]" />
-      <item index="3" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [runShadow]" />
-      <item index="4" class="java.lang.String" itemvalue="Gauge Execution.Specifications" />
+      <item index="0" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [runShadow]" />
+      <item index="1" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [buildDependents]" />
+      <item index="2" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [buildNeeded]" />
+      <item index="3" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [copyDependsLibs]" />
+      <item index="4" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [buildExecutableJar]" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Gauge Execution.Specifications" />
-        <item index="1" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [runShadow]" />
-        <item index="2" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [run]" />
-        <item index="3" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [buildExecutableJar]" />
-        <item index="4" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [dokka]" />
+        <item index="0" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [buildExecutableJar]" />
+        <item index="1" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [copyDependsLibs]" />
+        <item index="2" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [buildDependents]" />
+        <item index="3" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [buildNeeded]" />
+        <item index="4" class="java.lang.String" itemvalue="Gradle.DownloadInTamil [runShadow]" />
       </list>
     </recent_temporary>
   </component>
   <component name="SbtLocalSettings">
-    <option name="lastUpdateTimestamp" value="1507866011263" />
+    <option name="lastUpdateTimestamp" value="1508237716336" />
     <option name="externalProjectsViewState">
       <projects_view />
     </option>
@@ -1103,6 +1130,8 @@
       <workItem from="1507865973581" duration="430000" />
       <workItem from="1507866808070" duration="1230000" />
       <workItem from="1507948297458" duration="873000" />
+      <workItem from="1507951677565" duration="962000" />
+      <workItem from="1508221473633" duration="10094000" />
     </task>
     <task id="LOCAL-00001" summary="Updated tool with command line args templ.">
       <created>1502737758772</created>
@@ -1202,11 +1231,18 @@
       <option name="project" value="LOCAL" />
       <updated>1507950916088</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Added feature to switch between intamil mirrors">
+      <created>1508237657674</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1508237657674</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="46796000" />
+    <option name="totallyTimeSpent" value="57852000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1237,12 +1273,13 @@
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3873874" sideWeight="0.49409238" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32673267" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2984234" sideWeight="0.49409238" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4301802" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16111708" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16541353" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.32909605" sideWeight="0.5" order="17" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.14017186" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32909605" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14017186" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -1256,7 +1293,6 @@
       <window_info id="Salesforce" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32882884" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32909605" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Android WiFi ADB" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -1278,7 +1314,8 @@
     <MESSAGE value="Updated the tool to work well with HTTP Proxy if defined in env variable. Added some more exit points when exception occurs" />
     <MESSAGE value="Prepare code for #3" />
     <MESSAGE value="Added exe Jar" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added exe Jar" />
+    <MESSAGE value="Added feature to switch between intamil mirrors" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added feature to switch between intamil mirrors" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -1300,7 +1337,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#54#868#0" expanded="false" />
+            <element signature="e#54#936#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1310,7 +1347,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#54#868#0" expanded="false" />
+            <element signature="e#54#936#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1367,7 +1404,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#54#868#0" expanded="false" />
+            <element signature="e#54#936#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1384,7 +1421,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#54#868#0" expanded="false" />
+            <element signature="e#54#936#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1394,7 +1431,7 @@
         <state relative-caret-position="1134">
           <caret line="54" column="0" lean-forward="false" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
           <folding>
-            <element signature="e#54#868#0" expanded="false" />
+            <element signature="e#54#936#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1586,24 +1623,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/settings.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="36" lean-forward="false" selection-start-line="0" selection-start-column="36" selection-end-line="0" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/DownloadInTamil.iml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gradle.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="4" column="31" lean-forward="false" selection-start-line="4" selection-start-column="31" selection-end-line="4" selection-end-column="31" />
         </state>
       </provider>
     </entry>
@@ -1614,20 +1637,36 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/settings.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="36" lean-forward="false" selection-start-line="0" selection-start-column="36" selection-end-line="0" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gradle.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="88">
+          <caret line="4" column="31" lean-forward="false" selection-start-line="4" selection-start-column="31" selection-end-line="4" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/DownloadInTamil.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="71">
-          <caret line="262" column="13" lean-forward="false" selection-start-line="262" selection-start-column="13" selection-end-line="262" selection-end-column="13" />
+        <state relative-caret-position="-782">
+          <caret line="574" column="96" lean-forward="false" selection-start-line="574" selection-start-column="96" selection-end-line="574" selection-end-column="96" />
           <folding>
-            <element signature="e#54#868#0" expanded="false" />
+            <element signature="e#54#936#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="118" column="11" lean-forward="true" selection-start-line="118" selection-start-column="11" selection-end-line="118" selection-end-column="11" />
+        <state relative-caret-position="176">
+          <caret line="163" column="58" lean-forward="false" selection-start-line="163" selection-start-column="52" selection-end-line="163" selection-end-column="58" />
           <folding />
         </state>
       </provider>
