@@ -42,6 +42,33 @@ internal var bypassProxy = false
 internal val proxyDetailsDataObj: ProxyDetails by lazy { setHTTPProxy() }
 internal val intamilHostDetailsDataObj: IntamilHostDetails by lazy { findInTamilHostDetails() }
 internal val NEW_LINE = System.lineSeparator() ?: "\n"
+internal val browserObj: WebClient by lazy { createBrowser() }
+
+fun createBrowser(): WebClient {
+    val browser = if (!bypassProxy && proxyDetailsDataObj.proxyHostName != "" && proxyDetailsDataObj.proxyPort != 0) {
+        WebClient(BrowserVersion.FIREFOX_52, proxyDetailsDataObj.proxyHostName, proxyDetailsDataObj.proxyPort)
+    } else {
+        WebClient(BrowserVersion.FIREFOX_52)
+    }
+    browser.options.apply {
+        isUseInsecureSSL = true
+        isJavaScriptEnabled = false // Disable for faster execution
+        isCssEnabled = false
+        isThrowExceptionOnScriptError = false
+        isDoNotTrackEnabled = true
+        isActiveXNative = false
+        isAppletEnabled = false
+        isRedirectEnabled = true
+        isDownloadImages = false
+        isGeolocationEnabled = false
+        isPrintContentOnFailingStatusCode = true
+        timeout = 600000 //In Milli seconds, 10 minutes
+
+    }
+    browser.waitForBackgroundJavaScript(240000) // 4Mins
+
+    return browser
+}
 
 /**
  * This function sets the proxyHostName , proxyPort module level functions. Call this function only once in main
@@ -49,6 +76,7 @@ internal val NEW_LINE = System.lineSeparator() ?: "\n"
  * @return
  */
 fun setHTTPProxy(): ProxyDetails {
+    if (bypassProxy) return ProxyDetails()
 
     val envProxy = System.getenv("http_proxy") ?: ""
     val envProxyPatternRegEx = "(?i)\\s*http[s]?://(.*):(\\d+)".toRegex()
@@ -69,12 +97,11 @@ fun setHTTPProxy(): ProxyDetails {
 private fun findInTamilHostDetails(): IntamilHostDetails {
 
     val intamilProto = "http"
-    val browser = openBrowser()
     val intamilhostlist = arrayListOf("intamil.in", "intamil.co")
 
     intamilhostlist.forEach {
         try {
-            browser.getPage<HtmlPage>("$intamilProto://$it")
+            browserObj.getPage<HtmlPage>("$intamilProto://$it")
             println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: $intamilProto://$it is alive.").reset())
             return IntamilHostDetails(it, intamilProto, "$intamilProto://$it/movie-alphabet/0-9", "$intamilProto://$it/movie-alphabet")
 
@@ -213,9 +240,7 @@ fun downloadSingleSongFromURL(downloadDirectory: String, songFileName: String, s
     val songDownloadInTamilURL = intamilHostDetailsDataObj.intamilProto + "://" + intamilHostDetailsDataObj.intamilHostName + "/download/" + songID.toString()
     println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Downloading $songFN from URL $songDownloadInTamilURL ...").reset())
     try {
-
-        val browser = openBrowser()
-        val songfilePage = browser.getPage<UnexpectedPage>(songDownloadInTamilURL)
+        val songfilePage = browserObj.getPage<UnexpectedPage>(songDownloadInTamilURL)
         if (!songfilePage.webResponse.contentType.startsWith("audio/", true)) {
             println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Content type does not look like song. its " + songfilePage.webResponse.contentType).reset())
         }
@@ -293,33 +318,6 @@ fun downloadMovieSongsInParallel(downloadDirectory: String, songsNameAndURL: Lin
     return
 }
 
-fun openBrowser(): WebClient {
-
-    val browser = if (proxyDetailsDataObj.proxyHostName != "" && proxyDetailsDataObj.proxyPort != 0 && !bypassProxy) {
-        WebClient(BrowserVersion.FIREFOX_52, proxyDetailsDataObj.proxyHostName, proxyDetailsDataObj.proxyPort)
-    } else {
-        WebClient(BrowserVersion.FIREFOX_52)
-    }
-    browser.options.apply {
-        isUseInsecureSSL = true
-        isJavaScriptEnabled = true
-        isCssEnabled = false
-        isThrowExceptionOnScriptError = false
-        isDoNotTrackEnabled = true
-        isActiveXNative = false
-        isAppletEnabled = false
-        isRedirectEnabled = true
-        isDownloadImages = false
-        isGeolocationEnabled = false
-        isPrintContentOnFailingStatusCode = true
-        timeout = 600000 //In Milli seconds, 10 minutes
-
-    }
-    browser.waitForBackgroundJavaScript(240000) // 4Mins
-
-    return browser
-}
-
 fun getJavaVersion(): Double {
     val version = System.getProperty("java.version") ?: "0.0.0"
     var pos = version.indexOf('.')
@@ -378,8 +376,7 @@ fun searchAndFindMovieURL(movieSearchString: String): List<URL> {
     try {
         //Get the index URL
         println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Downloading Movie Index from " + searchBaseURL.toString() + " Wait...").reset())
-        val browser = openBrowser()
-        val movieIndexPage = browser.getPage<HtmlPage>(searchBaseURL)
+        val movieIndexPage = browserObj.getPage<HtmlPage>(searchBaseURL)
         val moviesHtmlDivList = movieIndexPage.getByXPath<HtmlDivision>("//div[contains(@class,'movie_icon')]")
         println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Done Downloaded Movie Index from " + searchBaseURL.toString()).reset())
 
@@ -450,11 +447,8 @@ fun downloadAllSongsInMovie(movieURL: URL, songsDownloadBaseDir: File) {
 
     val songsMap = linkedMapOf<String, String>()
     //Download the HTML page of the intamil movie
-    //Initialize the browser
-    val browser = openBrowser()
-
     println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Downloading data from $movieURL . Wait...").reset())
-    val moviePage = browser.getPage<HtmlPage>(movieURL)
+    val moviePage = browserObj.getPage<HtmlPage>(movieURL)
     //println(moviePage.asText())
     //println(moviePage.asXml())
     val movieName = moviePage.getByXPath<HtmlFigureCaption>("//div/figure/figcaption")?.firstOrNull()?.asText() ?: "!Unknown!"
@@ -525,6 +519,11 @@ fun main(vararg args: String) {
         exitProcess(4)
     }
     println(Ansi.ansi().fg(Ansi.Color.CYAN).a("INFO: Using Java  " + getJavaVersion()).reset())
+
+    //Handle --no-proxy before even parsing the command args due to complxity in finding Hosts
+    // Do it before first access to intamilHostDetailsDataObj
+    //defineCmdLineOptions() func uses the intamilHostDetailsDataObj
+    if ("--no-proxy" in args) bypassProxy = true
 
     //Handle command line options
     val cmdLineOptionsTemplate = defineCmdLineOptions()

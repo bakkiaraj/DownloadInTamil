@@ -2,7 +2,7 @@
 * Author: Bakki */
 
 group 'com.saaral'
-version '0.5.0'
+version '0.6.0'
 description 'Kotlin Sample app - Build with Gradle'
 
 def myAppName = 'DownloadInTamil' // local variable
@@ -42,7 +42,7 @@ apply plugin: 'application'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'org.jetbrains.dokka'
 
-mainClassName = "com.saaral.$myAppName"
+mainClassName = "${project.group}.$myAppName"
 defaultTasks 'run'
 
 
@@ -159,13 +159,10 @@ task buildExecutableJar(type: Copy) {
 }
 
 //Update the Gradle wrapper version
-// Alternate: Update gradle/wrapper/gradle-wrapper.properties file distributionUrl variable
-// Ex: distributionUrl=https://services.gradle.org/distributions/gradle-3.5-all.zip ,
-// uses 3.5 all (src+bin) version of gradle. SRC is needed for IDE to show help on gradle file
-
+// Also delete the "gracy colour" gradle folder, "Orange color" .gradle folder after the update and build
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
-    setDistributionType(Wrapper.DistributionType.ALL)
+    gradleVersion = '4.2.1' // From https://services.gradle.org/distributions/
+    setDistributionType(Wrapper.DistributionType.ALL) // Use jar and sources package , i.e ALL
 }
 
 /**
