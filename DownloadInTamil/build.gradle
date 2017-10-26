@@ -83,6 +83,12 @@ repositories {
     //include lib folder
     flatDir { dirs 'dependencies' }
 
+    //Local nexus Repo
+    //Note: DO not commit local repo to Git
+    /*maven {
+        url "http://<host>:8081/nexus/content/groups/public"
+    }*/
+
     // Remote binary repositories to resolve dependencies
     // You can declare any Maven/Ivy/file repository here.
 
@@ -165,6 +171,19 @@ task wrapper(type: Wrapper) {
     setDistributionType(Wrapper.DistributionType.ALL) // Use jar and sources package , i.e ALL
 }
 
+task listrepos() {
+    println "List Of Repositories:"
+    project.repositories.all {  ArtifactRepository repo ->
+        print "\n Repo Name : "+ repo.name
+        if (repo instanceof  FlatDirectoryArtifactRepository){
+            print " , Dir: " + repo.dirs
+        }
+        if (repo instanceof MavenArtifactRepository ) { //only for remote repos
+            print " , URL: " + repo.url
+        }
+    }
+    println ""
+}
 /**
  TIPS:
  * 1) use --profile with any gradle task for analysing build slowness / profile build steps
