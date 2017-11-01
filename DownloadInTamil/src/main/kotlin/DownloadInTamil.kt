@@ -42,7 +42,7 @@ internal var bypassProxy = false
 internal val proxyDetailsDataObj: ProxyDetails by lazy { setHTTPProxy() }
 internal val intamilHostDetailsDataObj: IntamilHostDetails by lazy { findInTamilHostDetails() }
 internal val NEW_LINE = System.lineSeparator() ?: "\n"
-internal val browserObj: WebClient by lazy { createBrowser() }
+internal val browserObj by lazy { createBrowser() }
 
 fun createBrowser(): WebClient {
     val browser = if (!bypassProxy && proxyDetailsDataObj.proxyHostName != "" && proxyDetailsDataObj.proxyPort != 0) {
@@ -63,7 +63,6 @@ fun createBrowser(): WebClient {
         isGeolocationEnabled = false
         isPrintContentOnFailingStatusCode = true
         timeout = 600000 //In Milli seconds, 10 minutes
-
     }
     browser.waitForBackgroundJavaScript(240000) // 4Mins
 
@@ -601,4 +600,3 @@ fun main(vararg args: String) {
     AnsiConsole.systemUninstall()
     exitProcess(0) //Quit normally, calling explicit exitProcess allows to call shutdown hooks
 }
-

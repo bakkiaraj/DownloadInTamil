@@ -132,13 +132,21 @@ runShadow {
     standardInput = System.in
     //opt1 is coming from Run configuration of the IDEA , As a -Popt1
     //args = ["--url=http://intamil.in/songs/Katha-Nayagan","--outdir=.","--no-proxy"]
-    args = ["--search='oru naal'","--outdir=c:/temp"]
+    args = ["--search='oru naal'","--outdir=c:/temp","--no-proxy"]
 }
 
 clean {
-    //Also clean some custom folders
+    //Config part should be outside
+    //Clean IDE build folders
+    delete "${project.projectDir}/out" // Delete complete dir
+    //Also clean some custom folders, Delete only files from the folder top level only
     delete fileTree(dir: "${project.projectDir}/dependencies", include: '*')
     delete fileTree(dir: "${project.projectDir}/exe", include: '*')
+
+    doLast {
+        println "Cleaning Done."
+        file("${project.projectDir}/out").mkdirs() //create an empty dir
+    }
 }
 
 
@@ -146,22 +154,32 @@ clean {
 //Custom tasks
 
 //Task to copy all the dependencies in to dependencies folder
-task copyDependsLibs(type: Copy) {
-    dependsOn shadowJar
+task copyDependsLibs(type: Copy,dependsOn:['shadowJar']) {
+    //Task type is Copy, following must be in config section
 
     from configurations.compile
     from configurations.runtime
     from configurations.testCompile
     into "${project.projectDir}/dependencies"
+
+    doLast {
+        println("Copying Dependent Libs into ${project.projectDir}/dependencies")
+    }
 }
 
 //Build and copy the final executable Jar into EXE folder
-task buildExecutableJar(type: Copy) {
-    dependsOn shadowJar
+task buildExecutableJar(type: Copy, dependsOn:['copyDependsLibs','shadowJar']) {
+    //Task type is Copy and the following must be in config section
 
+    project.tasks.findByName('copyDependsLibs').mustRunAfter('shadowJar') //Explicitly set the order
     from shadowJar //Using gradle's auto wire feature, It will automatically inject the jar name
     into "${project.projectDir}/exe"
-    tasks.copyDependsLibs.execute()
+
+    doLast {
+        //Task execution section
+        println("Copying FAT Jar to ${project.projectDir}/exe")
+
+    }
 }
 
 //Update the Gradle wrapper version
@@ -172,18 +190,42 @@ task wrapper(type: Wrapper) {
 }
 
 task listrepos() {
-    println "List Of Repositories:"
-    project.repositories.all {  ArtifactRepository repo ->
-        print "\n Repo Name : "+ repo.name
-        if (repo instanceof  FlatDirectoryArtifactRepository){
-            print " , Dir: " + repo.dirs
+    // Code that goes here is *configuring* the task, and will
+    // get evaluated on *every* build invocation, no matter
+    // which tasks Gradle eventually decides to execute.
+    // Don't do anything time-consuming here.
+
+    doLast {
+        // `doLast` adds a so-called *task action* to the task.
+        // The code inside the task action(s) defines the task's behavior.
+        // It will only get evaluated if and when Gradle decides to
+        // execute the task.
+        println "List Of Repositories:"
+        project.repositories.all { ArtifactRepository repo ->
+            print "\n Repo Name : " + repo.name
+            if (repo instanceof FlatDirectoryArtifactRepository) {
+                print " , Dir: " + repo.dirs
+            }
+            if (repo instanceof MavenArtifactRepository) { //only for remote repos
+                print " , URL: " + repo.url
+            }
         }
-        if (repo instanceof MavenArtifactRepository ) { //only for remote repos
-            print " , URL: " + repo.url
-        }
+        println ""
     }
-    println ""
 }
+
+// Improving on the previous task declaration, let's now use a *task type*
+// (see `type: Exec` below). Task types come with a predefined task action,
+// so it's typically not necessary to add one yourself. Also, many task types
+// predefine task inputs and outputs, which allows Gradle to check if the task
+// is up-to-date. Another advantage of task types is that they allow for
+// better tooling support (e.g. auto-completion of task properties).
+/*task precompile(type: Exec) {
+    // Since this task already has a task action, we only
+    // need to configure it.
+    commandLine = ["./play1.3.x/play", "precompile"] }
+}*/
+
 /**
  TIPS:
  * 1) use --profile with any gradle task for analysing build slowness / profile build steps
