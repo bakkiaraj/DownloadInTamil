@@ -116,10 +116,12 @@ dependencies {
 jar {
     manifest {
         attributes 'Implementation-Version': version,
+        //'Class-Path': "libs/"+configurations.compile.collect { it.getName() }.join(" libs/")+" "+configurations.compile.collect { it.getName() }.join(' '),
                 'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
                 'Main-Class': mainClassName
     }
-    from configurations.compile.collect { entry -> zipTree(entry) }
+    //Enable to get a FAT jar without shadow plugin
+    //from configurations.compile.collect { entry -> zipTree(entry) }
 }
 
 shadowJar {
