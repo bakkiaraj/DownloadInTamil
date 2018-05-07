@@ -7,6 +7,9 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException
 import com.gargoylesoftware.htmlunit.UnexpectedPage
 import com.gargoylesoftware.htmlunit.WebClient
 import com.gargoylesoftware.htmlunit.html.*
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.runBlocking
 import org.apache.commons.cli.*
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
@@ -226,7 +229,7 @@ fun downloadSingleSongFromURL(downloadDirectory: String, songFileName: String, s
     songFN = songFN.replace("\\s+".toRegex(), "_") //Replace space to _
     songFN = songFN.replace("_$".toRegex(), "") //Last _ to none
 
-    println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Start search $songFN info from $songURL ...").reset())
+    println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: [${Thread.currentThread().name}] Start search $songFN info from $songURL ...").reset())
 
     //Find download link from the song link
     //intamil logic http://intamil.co/song/<NUMBER>/Dooram-Nillu => http://intamil.co/download/<NUMBER> is download link
@@ -251,6 +254,8 @@ fun downloadSingleSongFromURL(downloadDirectory: String, songFileName: String, s
             println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Can not copy Input Stream Bytes to File $downloadDirectory/$songFN"))
             return false
         }
+        songfilePage.cleanUp()
+
         //println(FilenameUtils.getName(songfilePage.url.file) + ","+songfilePage.url.file)
     } catch (ex: Exception) {
 
@@ -261,7 +266,7 @@ fun downloadSingleSongFromURL(downloadDirectory: String, songFileName: String, s
         return false
     }
 
-    println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Done Downloading $songFN from $songURL into $downloadDirectory ").reset())
+    println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: [${Thread.currentThread().name}] Done Downloading $songFN from $songURL into $downloadDirectory ").reset())
     return true
 }
 
@@ -277,7 +282,7 @@ fun downloadMovieSongsInParallel(downloadDirectory: String, songsNameAndURL: Lin
         System.out.flush()
         System.err.flush()
         ex.printStackTrace()
-        return
+        throw ex
     }
 
     println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Starting $numberofProcessors download process in parallel").reset())
@@ -312,11 +317,48 @@ fun downloadMovieSongsInParallel(downloadDirectory: String, songsNameAndURL: Lin
         println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: " + ex.message).reset())
         throw ex
     }
-
-    println("INFO: $numberofSongsDownloaded files downloaded in $downloadDirectory")
-    return
+    println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: $numberofSongsDownloaded files downloaded in $downloadDirectory").reset())
 }
 
+fun downloadMovieSongsCoRoutine(downloadDirectory: String, songsNameAndURL: LinkedHashMap<String, String>) {
+    var numberofSongsDownloaded = 0
+    println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Create download dir $downloadDirectory").reset())
+
+    try {
+        FileUtils.forceMkdir(File(downloadDirectory))
+    } catch (ex: Exception) {
+        println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: Can not create directory $downloadDirectory. Return" + ex.message).reset())
+        System.out.flush()
+        System.err.flush()
+        ex.printStackTrace()
+        return
+    }
+
+    println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Starting download process via coroutines").reset())
+    val jobs = arrayListOf<Deferred<Boolean>>()
+    //val tpContext = newFixedThreadPoolContext(10,"dlr")
+    for ((songURL, songName) in songsNameAndURL) {
+        //Instead of using CommonPool, Use fixed local pools for faster songs download because CommonPool is no.of cpu -1 and in our case its a network IO is
+        //blocking than CPU, So use more threads via FixedThreadPool
+
+        //Later thought: SIngle CPU itself can load the full network. Since we are downloading from single host, No point in increasing dispatcher threads count. Use commonpool (which is default) which will use no.of.cpu -1 threads, which is more than enough.
+        jobs += async {
+            downloadSingleSongFromURL(downloadDirectory, songName, songURL)
+        }
+
+    }
+    runBlocking {
+        jobs.forEach {
+            if (it.await()) {
+                numberofSongsDownloaded++
+            } else {
+                println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: [${Thread.currentThread().name}] did not download song").reset())
+            }
+        }
+    }
+    println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Waiting for the CoRoutines to complete download songs").reset())
+    println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: $numberofSongsDownloaded files downloaded in $downloadDirectory").reset())
+}
 fun getJavaVersion(): Double {
     val version = System.getProperty("java.version") ?: "0.0.0"
     var pos = version.indexOf('.')
@@ -429,9 +471,18 @@ fun searchAndFindMovieURL(movieSearchString: String): List<URL> {
 }
 
 fun dump(obj: Any) {
-    println("DUMP:--")
-    println(ReflectionToStringBuilder.toString(obj, RecursiveToStringStyle.MULTI_LINE_STYLE, true, true))
-    println("DUMP:--")
+    println(Ansi.ansi().fg(Ansi.Color.MAGENTA).a("DUMP:--").reset())
+    println(
+        Ansi.ansi().fg(Ansi.Color.MAGENTA).a(
+            ReflectionToStringBuilder.toString(
+                obj,
+                RecursiveToStringStyle.MULTI_LINE_STYLE,
+                true,
+                true
+            )
+        ).reset()
+    )
+    println(Ansi.ansi().fg(Ansi.Color.MAGENTA).a("DUMP:--").reset())
 }
 
 fun downloadAllSongsInMovie(movieURL: URL, songsDownloadBaseDir: File) {
@@ -443,7 +494,6 @@ fun downloadAllSongsInMovie(movieURL: URL, songsDownloadBaseDir: File) {
         println(Ansi.ansi().fg(Ansi.Color.RED).a("ERROR:: $songsDownloadBaseDir does not exists OR its not a writable directory / folder.").reset())
         throw IllegalAccessError("Output Directory Access Error.")
     }
-
     val songsMap = linkedMapOf<String, String>()
     //Download the HTML page of the intamil movie
     println(Ansi.ansi().fg(Ansi.Color.BLUE).a("INFO: Downloading data from $movieURL . Wait...").reset())
@@ -480,8 +530,8 @@ fun downloadAllSongsInMovie(movieURL: URL, songsDownloadBaseDir: File) {
     println(Ansi.ansi().fg(Ansi.Color.MAGENTA).a("INFO: ------ Songs -------- ").reset())
 
     //Songs details are ready, Download
-    downloadMovieSongsInParallel(songsDownloadBaseDir.absolutePath + "/" + movieName, songsMap)
-
+    //downloadMovieSongsInParallel(songsDownloadBaseDir.absolutePath + "/" + movieName, songsMap)
+    downloadMovieSongsCoRoutine(songsDownloadBaseDir.absolutePath + "/" + movieName, songsMap)
     //Save movie details in file
     File(songsDownloadBaseDir.absolutePath + "/" + movieName + "/info.txt").writeText(
             "Movie: $movieName" + System.lineSeparator() +
@@ -492,12 +542,14 @@ fun downloadAllSongsInMovie(movieURL: URL, songsDownloadBaseDir: File) {
 }
 
 fun downloadLatestMovieURLs(songsDownloadBaseDir: File): List<URL> {
-    return listOf<URL>(URL("http://aa.com"), URL("http://bb.com"))
+    TODO("Implement with $songsDownloadBaseDir")
+    //return listOf<URL>(URL("http://aa.com"), URL("http://bb.com"))
 }
 
 
 fun main(vararg args: String) {
 
+    //Turn off initial logging from the HTMLUnit
     getLogger("com.gargoylesoftware").level = Level.OFF
     AnsiConsole.systemInstall()
 

@@ -2,8 +2,8 @@
 * Author: Bakki */
 
 group 'com.saaral'
-version '0.6.0'
-description 'Kotlin Sample app - Build with Gradle'
+version '1.0.0'
+description "Kotlin Application to downloadsongs from intamil.in - Build with Gradle"
 
 def myAppName = 'DownloadInTamil' // local variable
 project.ext.set('javahome', System.env['JAVA_HOME'])
@@ -12,7 +12,7 @@ project.ext.set('javahome', System.env['JAVA_HOME'])
 buildscript {
 
     //https://kotlinlang.org/docs/reference/using-gradle.html
-    ext.kotlin_version = '1.1.51'
+    ext.kotlin_version = '1.2.41'
 
     repositories {
 
@@ -27,8 +27,7 @@ buildscript {
     dependencies {
         // When gradle build needs something to run, Its under classpath
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.1" // from https://github.com/johnrengelman/shadow
-        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.15"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.+"
     }
 }
 
@@ -38,13 +37,22 @@ apply plugin: 'eclipse'
 apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: 'application'
-//http://imperceptiblethoughts.com/shadow/
-apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'org.jetbrains.dokka'
 
 mainClassName = "${project.group}.$myAppName"
 defaultTasks 'run'
 
+configurations.all {
+    //Gradle will then check for updates every 24 hours as default.
+    resolutionStrategy {
+
+        // cache dynamic versions for 10 minutes
+        cacheDynamicVersionsFor 10*60, 'seconds'
+        // don't cache changing modules at all
+        cacheChangingModulesFor 0, 'seconds'
+    }
+
+}
 
 /*compileJava {
     sourceCompatibility = 1.8
@@ -105,12 +113,13 @@ repositories {
 
 dependencies {
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.fusesource.jansi:jansi:1.16"
-    compile "net.sourceforge.htmlunit:htmlunit:2.27"
-    compile "commons-io:commons-io:2.5"
-    compile "commons-cli:commons-cli:1.4"
-    compile 'org.apache.commons:commons-lang3:3.5' //https://commons.apache.org/proper/commons-lang/
+    implementation  "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation  'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.+' //https://github.com/Kotlin/kotlinx.coroutines , Apache 2.0
+    implementation  "org.fusesource.jansi:jansi:1.+"
+    implementation  "net.sourceforge.htmlunit:htmlunit:2.+"
+    implementation  "commons-io:commons-io:2.+"
+    implementation  "commons-cli:commons-cli:1.+"
+    implementation  'org.apache.commons:commons-lang3:3.+' //https://commons.apache.org/proper/commons-lang/
 }
 
 jar {
@@ -120,21 +129,26 @@ jar {
                 'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
                 'Main-Class': mainClassName
     }
-    //Enable to get a FAT jar without shadow plugin
-    //from configurations.compile.collect { entry -> zipTree(entry) }
-}
-
-shadowJar {
     baseName = myAppName
     classifier = "EXE"
     version = null
+
+    from {
+            configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        }
+
 }
 
-runShadow {
-    standardInput = System.in
+
+run {
+    doFirst {
+        standardInput = System.in
+        environment("http_proxy",null)
+        environment("https_proxy",null)
+    }
     //opt1 is coming from Run configuration of the IDEA , As a -Popt1
     //args = ["--url=http://intamil.in/songs/Katha-Nayagan","--outdir=.","--no-proxy"]
-    args = ["--search='oru naal'","--outdir=c:/temp","--no-proxy"]
+    //args = ["--search='oru naal'","--outdir=c:/temp","--no-proxy"]
 }
 
 clean {
@@ -156,12 +170,14 @@ clean {
 //Custom tasks
 
 //Task to copy all the dependencies in to dependencies folder
-task copyDependsLibs(type: Copy,dependsOn:['shadowJar']) {
+task copyDependsLibs(type: Copy,dependsOn:['jar']) {
     //Task type is Copy, following must be in config section
 
-    from configurations.compile
-    from configurations.runtime
-    from configurations.testCompile
+    from {
+        configurations.compileClasspath
+        configurations.compile
+        configurations.runtime
+    }
     into "${project.projectDir}/dependencies"
 
     doLast {
@@ -169,25 +185,24 @@ task copyDependsLibs(type: Copy,dependsOn:['shadowJar']) {
     }
 }
 
-//Build and copy the final executable Jar into EXE folder
-task buildExecutableJar(type: Copy, dependsOn:['copyDependsLibs','shadowJar']) {
+//Build and copy the final executable jar into EXE folder
+task buildExecutablejar(type: Copy, dependsOn:['copyDependsLibs','jar']) {
     //Task type is Copy and the following must be in config section
 
-    project.tasks.findByName('copyDependsLibs').mustRunAfter('shadowJar') //Explicitly set the order
-    from shadowJar //Using gradle's auto wire feature, It will automatically inject the jar name
+    project.tasks.findByName('copyDependsLibs').mustRunAfter('jar') //Explicitly set the order
+    from jar //Using gradle's auto wire feature, It will automatically inject the jar name
     into "${project.projectDir}/exe"
 
     doLast {
         //Task execution section
-        println("Copying FAT Jar to ${project.projectDir}/exe")
+        println("Copying FAT jar to ${project.projectDir}/exe")
 
     }
 }
 
-//Update the Gradle wrapper version
-// Also delete the "gracy colour" gradle folder, "Orange color" .gradle folder after the update and build
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.2.1' // From https://services.gradle.org/distributions/
+//When run this task, Update the Gradle wrapper version
+task updateGradleWrapperVersion (type: Wrapper) {
+    gradleVersion = '4.7' // From https://services.gradle.org/distributions/
     setDistributionType(Wrapper.DistributionType.ALL) // Use jar and sources package , i.e ALL
 }
 
@@ -232,7 +247,7 @@ task listrepos() {
  TIPS:
  * 1) use --profile with any gradle task for analysing build slowness / profile build steps
  * Ex:
- * gradle buildExecutableJar --profile
+ * gradle buildExecutablejar --profile
  *
  * This generates the .html under build/reports
  *
