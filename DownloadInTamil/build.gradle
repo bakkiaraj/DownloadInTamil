@@ -2,8 +2,8 @@
 * Author: Bakki */
 
 group 'com.saaral'
-version '0.5.0'
-description 'Kotlin Sample app - Build with Gradle'
+version '1.0.1'
+description "Kotlin Application to downloadsongs from intamil.in - Build with Gradle"
 
 def myAppName = 'DownloadInTamil' // local variable
 project.ext.set('javahome', System.env['JAVA_HOME'])
@@ -11,8 +11,9 @@ project.ext.set('javahome', System.env['JAVA_HOME'])
 //Dependencies for the gradle build script itself
 buildscript {
 
-    ext.kotlin_version = '1.1.4-3'
-    ext.shadowplugin_version = '2.0.0' // from https://github.com/johnrengelman/shadow
+    //https://kotlinlang.org/docs/reference/using-gradle.html
+    ext.kotlin_version = '1.3.11'
+    ext.gradleVersion = '4.10.3' //From https://services.gradle.org/distributions/
 
     repositories {
 
@@ -25,9 +26,9 @@ buildscript {
 
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         // When gradle build needs something to run, Its under classpath
-        classpath "com.github.jengelman.gradle.plugins:shadow:$shadowplugin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.+"
     }
 }
 
@@ -37,12 +38,22 @@ apply plugin: 'eclipse'
 apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: 'application'
-//http://imperceptiblethoughts.com/shadow/
-apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'org.jetbrains.dokka'
 
-mainClassName = "com.saaral.$myAppName"
+mainClassName = "${project.group}.$myAppName"
 defaultTasks 'run'
 
+configurations.all {
+    //Gradle will then check for updates every 24 hours as default.
+    resolutionStrategy {
+
+        // cache dynamic versions for 10 minutes
+        cacheDynamicVersionsFor 10*60, 'seconds'
+        // don't cache changing modules at all
+        cacheChangingModulesFor 0, 'seconds'
+    }
+
+}
 
 /*compileJava {
     sourceCompatibility = 1.8
@@ -57,12 +68,6 @@ compileKotlin {
     }
 }
 
-kotlin {
-    experimental {
-        coroutines 'enable'
-    }
-}
-
 sourceSets {
     main.kotlin.srcDirs += 'src/main/kotlin'
     //main.java.srcDirs += 'src/main/java'
@@ -70,10 +75,22 @@ sourceSets {
     test.kotlin.srcDirs += 'src/test/kotlin'
 }
 
+//Kotlin Doc config
+dokka {
+    outputFormat = 'html'
+    outputDirectory = "${project.buildDir}/javadoc"
+}
+
 // In this section you declare where to find the dependencies of your project
 repositories {
     //include lib folder
     flatDir { dirs 'dependencies' }
+
+    //Local nexus Repo
+    //Note: DO not commit local repo to Git
+    /*maven {
+        url "http://<host>:8081/nexus/content/groups/public"
+    }*/
 
     // Remote binary repositories to resolve dependencies
     // You can declare any Maven/Ivy/file repository here.
@@ -91,40 +108,55 @@ repositories {
 
 dependencies {
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.fusesource.jansi:jansi:1.16"
-    compile "net.sourceforge.htmlunit:htmlunit:2.27"
-    compile "commons-io:commons-io:2.5"
-    compile "commons-cli:commons-cli:1.4"
-    compile 'org.apache.commons:commons-lang3:3.5' //https://commons.apache.org/proper/commons-lang/
+    implementation  "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation  'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.0' //https://github.com/Kotlin/kotlinx.coroutines , Apache 2.0
+    implementation  "org.fusesource.jansi:jansi:1.+"
+    implementation  "net.sourceforge.htmlunit:htmlunit:2.+"
+    implementation  "commons-io:commons-io:2.+"
+    implementation  "commons-cli:commons-cli:1.+"
+    implementation  'org.apache.commons:commons-lang3:3.+' //https://commons.apache.org/proper/commons-lang/
 }
 
 jar {
     manifest {
         attributes 'Implementation-Version': version,
+        //'Class-Path': "libs/"+configurations.compile.collect { it.getName() }.join(" libs/")+" "+configurations.compile.collect { it.getName() }.join(' '),
                 'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
                 'Main-Class': mainClassName
     }
-    from configurations.compile.collect { entry -> zipTree(entry) }
-}
-
-shadowJar {
     baseName = myAppName
     classifier = "EXE"
     version = null
+
+    from {
+            configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        }
+
 }
 
-runShadow {
+
+run {
     standardInput = System.in
+    //environment "http_proxy",""
+
     //opt1 is coming from Run configuration of the IDEA , As a -Popt1
     //args = ["--url=http://intamil.in/songs/Katha-Nayagan","--outdir=.","--no-proxy"]
-    args = ["--help"]
+    args = ["--search='Maari 2'","--outdir=E:\\toWrite"]
+
 }
 
 clean {
-    //Also clean some custom folders
+    //Config part should be outside
+    //Clean IDE build folders
+    delete "${project.projectDir}/out" // Delete complete dir
+    //Also clean some custom folders, Delete only files from the folder top level only
     delete fileTree(dir: "${project.projectDir}/dependencies", include: '*')
     delete fileTree(dir: "${project.projectDir}/exe", include: '*')
+
+    doLast {
+        println "Cleaning Done."
+        file("${project.projectDir}/out").mkdirs() //create an empty dir
+    }
 }
 
 
@@ -132,39 +164,73 @@ clean {
 //Custom tasks
 
 //Task to copy all the dependencies in to dependencies folder
-task copyDependsLibs(type: Copy) {
-    dependsOn shadowJar
+task copyDependsLibs(type: Copy,dependsOn:['jar']) {
+    //Task type is Copy, following must be in config section
 
-    from configurations.compile
-    from configurations.runtime
-    from configurations.testCompile
+    from {
+        configurations.compileClasspath
+        configurations.runtimeClasspath
+    }
     into "${project.projectDir}/dependencies"
+
+    doLast {
+        println("Copying Dependent Libs into ${project.projectDir}/dependencies")
+    }
 }
 
-//Build and copy the final executable Jar into EXE folder
-task buildExecutableJar(type: Copy) {
-    dependsOn shadowJar
+//Build and copy the final executable jar into EXE folder
+task buildExecutablejar(type: Copy, dependsOn:['copyDependsLibs','jar']) {
+    //Task type is Copy and the following must be in config section
 
-    from shadowJar //Using gradle's auto wire feature, It will automatically inject the jar name
+    project.tasks.findByName('copyDependsLibs').mustRunAfter('jar') //Explicitly set the order
+    from jar //Using gradle's auto wire feature, It will automatically inject the jar name
     into "${project.projectDir}/exe"
-    tasks.copyDependsLibs.execute()
+
+    doLast {
+        //Task execution section
+        println("Copying FAT jar to ${project.projectDir}/exe")
+
+    }
 }
 
 //Update the Gradle wrapper version
-// Alternate: Update gradle/wrapper/gradle-wrapper.properties file distributionUrl variable
-// Ex: distributionUrl=https://services.gradle.org/distributions/gradle-3.5-all.zip ,
-// uses 3.5 all (src+bin) version of gradle. SRC is needed for IDE to show help on gradle file
+// Also delete the "gracy colour" gradle folder, "Orange color" .gradle folder after the update and build
+// Also update gradle , gradle-wrapper.properties file
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
-    setDistributionType(Wrapper.DistributionType.ALL)
+wrapper{
+    gradleVersion = project.ext.gradleVersion
+    distributionType = org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
 }
 
+task listrepos() {
+    // Code that goes here is *configuring* the task, and will
+    // get evaluated on *every* build invocation, no matter
+    // which tasks Gradle eventually decides to execute.
+    // Don't do anything time-consuming here.
+
+    doLast {
+        // `doLast` adds a so-called *task action* to the task.
+        // The code inside the task action(s) defines the task's behavior.
+        // It will only get evaluated if and when Gradle decides to
+        // execute the task.
+        println "List Of Repositories:"
+        project.repositories.all { ArtifactRepository repo ->
+            print "\n Repo Name : " + repo.name
+            if (repo instanceof FlatDirectoryArtifactRepository) {
+                print " , Dir: " + repo.dirs
+            }
+            if (repo instanceof MavenArtifactRepository) { //only for remote repos
+                print " , URL: " + repo.url
+            }
+        }
+        println ""
+    }
+}
 /**
  TIPS:
  * 1) use --profile with any gradle task for analysing build slowness / profile build steps
  * Ex:
- * gradle buildExecutableJar --profile
+ * gradle buildExecutablejar --profile
  *
  * This generates the .html under build/reports
  *
