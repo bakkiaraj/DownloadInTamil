@@ -5,47 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c6ee7fef-671d-4a53-afa8-fd9863a4e880" name="Default" comment="Updated with intamil.co.in host">
-      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DownloadInTamil.iml" beforeDir="false" afterPath="$PROJECT_DIR$/DownloadInTamil.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DownloadInTamil.ipr" beforeDir="false" afterPath="$PROJECT_DIR$/DownloadInTamil.ipr" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DownloadInTamil.iws" beforeDir="false" afterPath="$PROJECT_DIR$/DownloadInTamil.iws" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DownloadInTamil_main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/DownloadInTamil_main.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DownloadInTamil_test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/DownloadInTamil_test.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_gradle.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/commons-codec-1.9.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/commons-io-2.5.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/commons-lang3-3.5.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/cssparser-0.9.23.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/htmlunit-2.27.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/htmlunit-core-js-2.27.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/httpclient-4.5.3.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/httpcore-4.4.6.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/httpmime-4.5.3.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/jansi-1.16.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/jetty-client-9.4.5.v20170502.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/jetty-http-9.4.5.v20170502.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/jetty-io-9.4.5.v20170502.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/jetty-util-9.4.5.v20170502.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/kotlin-stdlib-1.1.4-3.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/kotlin-stdlib-1.1.4.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/neko-htmlunit-2.27.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/sac-1.3.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/websocket-api-9.4.5.v20170502.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/websocket-client-9.4.5.v20170502.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/websocket-common-9.4.5.v20170502.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies/xercesImpl-2.11.0.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exe/DownloadInTamil-EXE.jar" beforeDir="false" afterPath="$PROJECT_DIR$/exe/DownloadInTamil-EXE.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exe/sample_run.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/exe/sample_run.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/DownloadInTamil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/DownloadInTamil.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/../LICENSE" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -124,22 +86,7 @@
     </system>
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/build.gradle">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="84">
-              <caret line="4" column="72" selection-start-line="4" selection-start-column="72" selection-end-line="4" selection-end-column="72" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="375" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -186,8 +133,8 @@
   <component name="Git.Settings">
     <option name="PREVIOUS_COMMIT_AUTHORS">
       <list>
-        <option value="Bakkiaraj &lt;sam.bakki@gmail.com&gt;" />
         <option value="Bakkiaraj Murugesan &lt;sam.bakki@gmail.com&gt;" />
+        <option value="Bakkiaraj &lt;sam.bakki@gmail.com&gt;" />
       </list>
     </option>
     <option name="ROOT_SYNC" value="DONT_SYNC" />
@@ -683,7 +630,7 @@
       <workItem from="1507116142391" duration="109000" />
       <workItem from="1507117893562" duration="244000" />
       <workItem from="1546848129674" duration="85000" />
-      <workItem from="1546848340036" duration="3497000" />
+      <workItem from="1546848340036" duration="3859000" />
     </task>
     <task id="LOCAL-00001" summary="Updated tool with command line args templ.">
       <created>1502737758772</created>
@@ -776,11 +723,18 @@
       <option name="project" value="LOCAL" />
       <updated>1505326267353</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Updated with intamil.co.in host">
+      <created>1546852029186</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1546852029186</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="45612000" />
+    <option name="totallyTimeSpent" value="45974000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -793,16 +747,15 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1050" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17024705" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17024705" />
       <window_info id="Structure" order="1" weight="0.2019334" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="3" />
       <window_info id="UI Designer" order="4" />
       <window_info id="Favorites" order="5" side_tool="true" />
       <window_info id="Image Layers" order="6" />
-      <window_info active="true" anchor="bottom" id="Messages" order="0" visible="true" weight="0.32882884" />
+      <window_info active="true" anchor="bottom" id="Messages" order="0" visible="true" weight="0.32865497" />
       <window_info anchor="bottom" id="Message" order="1" />
       <window_info anchor="bottom" id="Find" order="2" weight="0.32909605" />
       <window_info anchor="bottom" id="Run" order="3" sideWeight="0.49610895" weight="0.55789477" />
@@ -847,6 +800,7 @@
     <option name="version" value="1" />
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <MESSAGE value="Updated tool with command line args templ." />
     <MESSAGE value="Updated tool with command line args handling" />
     <MESSAGE value="Added MD file" />
@@ -858,7 +812,8 @@
     <MESSAGE value="Updated the tool to work well with HTTP Proxy if defined in env variable. Added some more exit points when exception occurs" />
     <MESSAGE value="Prepare code for #3" />
     <MESSAGE value="Added exe Jar" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added exe Jar" />
+    <MESSAGE value="Updated with intamil.co.in host" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated with intamil.co.in host" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -1013,13 +968,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="84">
           <caret line="4" column="72" selection-start-line="4" selection-start-column="72" selection-end-line="4" selection-end-column="72" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gradlew">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="179">
+          <caret line="138" column="30" selection-start-line="138" selection-start-column="30" selection-end-line="138" selection-end-column="30" />
         </state>
       </provider>
     </entry>
