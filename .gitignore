@@ -10,3 +10,6 @@ out/
 *.iml
 *.ipr
 DownloadInTamil/__gradle.properties
+/DownloadInTamil/*.iml
+/DownloadInTamil/*.ipr
+/DownloadInTamil/*.iws
