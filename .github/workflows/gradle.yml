@@ -24,4 +24,6 @@ jobs:
       working-directory: ./DownloadInTamil
       run: chmod +x gradlew
     - name: Build with Gradle
+      working-directory: ./DownloadInTamil
       run: ./gradlew build
+      
