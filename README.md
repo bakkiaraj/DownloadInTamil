@@ -1,4 +1,6 @@
 # Download Tamil Songs from intamil website
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fbakkiaraj%2FDownloadInTamil.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fbakkiaraj%2FDownloadInTamil?ref=badge_shield)
+
 
 ## [DownloadInTamil-EXE.jar](https://github.com/bakkiaraj/DownloadInTamil/raw/master/DownloadInTamil/exe/DownloadInTamil-EXE.jar)
 
@@ -31,6 +33,9 @@ java -jar DownloadInTamil-EXE.jar <Options>
      (c) Bakkiaraj Murugesan
      https://bakkiaraj.github.io/DownloadInTamil
      License: MIT License
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fbakkiaraj%2FDownloadInTamil.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fbakkiaraj%2FDownloadInTamil?ref=badge_large)
 
 ## Example 1 - Download the movie song using movie name search in intamil website
     java -jar DownloadInTamil-EXE.jar --outdir=C:/temp --search=vivegam
